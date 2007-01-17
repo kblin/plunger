@@ -21,40 +21,55 @@ The plunger main program will load all plugins and register them using
 the register() function.
 """
 
-class Registry:
-    def __init__(self):
-        self.export_formats = {}
-        self.import_formats = {}
+import os
+import sys
 
-    def register(self, module, format, does_import=False, does_export=False):
-        """Register an import or export module.
-        module would be the class that exports/imports data.
-        format is a string representation of the format.
-        does_import should be set to true of t
-        """
-        if does_import:
-            self.import_formats[format]=module
+export_formats = {}
+import_formats = {}
 
-        if does_export:
-            self.export_formats[format]=module
+def register(module, format, does_import=False, does_export=False):
+    """Register an import or export module.
+    module would be the class that exports/imports data.
+    format is a string representation of the format.
+    does_import should be set to true of t
+    """
+    if does_import:
+        import_formats[format]=module
 
-    def getExportFormats(self):
-        """Get a list of exportable formats
-        """
-        return self.export_formats.keys()
+    if does_export:
+        export_formats[format]=module
 
-    def getImportFormats(self):
-        """Get a list of importable formats
-        """
-        return self.import_formats.keys()
+def getExportFormats():
+    """Get a list of exportable formats
+    """
+    return export_formats.keys()
 
-    def getExporter(self, format):
-        """Get an exporter for "format"
-        """
-        return self.export_formats[format]
+def getImportFormats():
+    """Get a list of importable formats
+    """
+    return import_formats.keys()
 
-    def getImporter(self, format):
-        """Get an importer for "format"
-        """
-        return self.import_formats[format]
+def getExporter(format):
+    """Get an exporter for "format"
+    """
+    return export_formats[format]
 
+def getImporter(format):
+    """Get an importer for "format"
+    """
+    return import_formats[format]
+
+def loadPlugins(plugin_dir):
+    plugins = []
+    for filename in os.listdir(plugin_dir):
+        name, ext = os.path.splitext(filename)
+        if ext == ".py":
+            plugins.append(name)
+
+    sys.path.append(plugin_dir)
+
+    for plugin in plugins:
+        module = __import__(plugin)
+        register(module, module.format, module.does_import, module.does_export)
+
+    sys.path.pop()

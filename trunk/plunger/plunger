@@ -27,7 +27,7 @@ import getopt
 import sys
 import os
 from model import Model
-from registry import Registry
+import registry
 
 def usage():
     """Print the usage.
@@ -41,35 +41,16 @@ Possible options are:
 --display-formats   -D          List supported input/output formats.
 """
 
-def displayFormats(reg):
+def displayFormats():
     """Display import and export formats currently supported by plunger
     """
-    print "Supported import formats: %s" % ", ".join(reg.getImportFormats())
-    print "Supported export formats: %s" % ", ".join(reg.getExportFormats())
-
-def loadPlugins(reg):
-    """Loads all file format plugins from the plugin dir and registers them
-    with the registry.
-    """
-    plugins = []
-    for filename in os.listdir("plugins"):
-        name, ext = os.path.splitext(filename)
-        if ext == ".py":
-            plugins.append(name)
-
-    sys.path.append("plugins")
-
-    for plugin in plugins:
-        module = __import__(plugin)
-        module.register(reg)
-
-    sys.path.pop()
+    print "Supported import formats: %s" % ", ".join(registry.getImportFormats())
+    print "Supported export formats: %s" % ", ".join(registry.getExportFormats())
 
 def main(argv):
     input_format = None
     output_format = None
     _debug = 0
-    _reg = Registry()
 
     try:
         opts, args = getopt.getopt(argv, "hdi:o:D",
@@ -78,7 +59,7 @@ def main(argv):
         usage()
         sys.exit(2)
 
-    loadPlugins(_reg)
+    registry.loadPlugins("plugins")
 
     for opt, arg in opts:
         if opt in ("-h", "--help"):
@@ -88,16 +69,16 @@ def main(argv):
             _debug = 1
         elif opt in ("-i", "--in="):
             input_format = arg
-            if not input_format in _reg.getImportFormats():
+            if not input_format in registry.getImportFormats():
                 print "Error, format '%s' is not supported." % input_format
                 sys.exit(10)
         elif opt in ("-o", "--out="):
             output_format = arg
-            if not output_format in _reg.getExportFormats():
+            if not output_format in registry.getExportFormats():
                 print "Error, format '%s' is not supported." % output_format
                 sys.exit(11)
         elif opt in ("-D", "--display-formats"):
-            displayFormats(_reg)
+            displayFormats()
             sys.exit(0)
 
     if len(args) < 2:

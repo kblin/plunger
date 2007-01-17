@@ -1,0 +1,4 @@
+*.pyc
+.*.swp
+plunger/*.dae
+plunder/*.md3
