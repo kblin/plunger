@@ -20,58 +20,43 @@
 The module supports import and export.
 """
 
-try:
-    from plunger_plugin import PlungerPlugin
-except ImportError:
-    import sys
-    sys.path.append("..")
-    from plunger_plugin import PlungerPlugin
-    sys.path.pop()
+format = "collada"
+ext = ".dae"
+needs_dir = False
+does_import = True
+does_export = True
 
-def register(registry):
-    c = Collada()
-    c.register(registry)
-
-class Collada(PlungerPlugin):
-    def __init__(self):
-        self.format = "collada"
-        self.ext = ".dae"
-        self.needs_dir = False
-
-    def register(self, registry):
-        registry.register(self, self.format, True, True)
-
-    def importAsset(self, model, asset):
-        """Import a collada .dae file.
-        As this corresponds to the internal data model, nothing much is needed.
-        """
-        from xml.dom import minidom
-        try:
-            import toolbox
-        except ImportError:
-            import sys
-            sys.path.append("..")
-            import toolbox
-            sys.path.pop()
-
-        sock = toolbox.openAny(asset)
-        model.dom = minidom.parse(sock)
-        sock.close()
-
-    def exportAsset(self, model, asset):
+def importAsset(self, model, asset):
+    """Import a collada .dae file.
+    As this corresponds to the internal data model, nothing much is needed.
+    """
+    from xml.dom import minidom
+    try:
+        import toolbox
+    except ImportError:
         import sys
-        file = None
-        try:
-            file = open(asset, "w")
-        except IOError:
-            print "Failed to open '%s' for writing" % asset
-            sys.exit(1)
+        sys.path.append("..")
+        import toolbox
+        sys.path.pop()
 
-        try:
-            file.write(model.dom.toxml())
-            file.close()
-        except IOError:
-            print "Writing '%s' failed." % asset
-            sys.exit(1)
+    sock = toolbox.openAny(asset)
+    model.dom = minidom.parse(sock)
+    sock.close()
+
+def exportAsset(self, model, asset):
+    import sys
+    file = None
+    try:
+        file = open(asset, "w")
+    except IOError:
+        print "Failed to open '%s' for writing" % asset
+        sys.exit(1)
+
+    try:
+        file.write(model.dom.toxml())
+        file.close()
+    except IOError:
+        print "Writing '%s' failed." % asset
+        sys.exit(1)
 
 

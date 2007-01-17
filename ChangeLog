@@ -1,3 +1,14 @@
+2007-01-18  Kai Blin  <kai.blin@gmail.com>
+	* plugins/collada.py, plugins/md3.py: No class needed.
+	* registry.py: No class needed, take care of loading the plugins.
+	* plunger: Remove plugin-loading logic.
+	* plunger_plugin.py: Not needed anymore.
+
+2007-01-17  Kai Blin  <kai.blin@gmail.com>
+	* .cvsignore: ignore unneeded files for CVS, too.
+	* plugins/md3.py: initial md3 exporter
+	* plunger_plugin.py: fix the constructor
+
 2007-01-17  Kai Blin  <kai.blin@gmail.com>
 	* model.py: Access to the internal data model.
 	* plunger_plugin.py: Interface for all plugins.
