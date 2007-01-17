@@ -1,0 +1,15 @@
+PLUNGER TODO
+------------
+
+Version 0.0.1:
+--------------
+* Get the text interface set up
+* Load Collada.dae files.
+
+Version 0.0.2:
+--------------
+* Export static meshes to md3, including texture resources.
+
+Version 0.0.3:
+--------------
+* Conversion of Collada -> Cal3D

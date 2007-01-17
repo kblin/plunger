@@ -1,0 +1,113 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2007 by Kai Blin
+#
+# Plunger is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; version 2 of the License.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
+"""Plunger is a tool to make the WorldForge media pipeline flow more smoothly.
+
+To do so, it will convert 3D assets from the Collada format to MD3, Cal3D and
+Ogre.
+
+Plunger is copyright (c) 2007 by Kai Blin  <kai.blin@gmail.com>.
+Plunger is covered under the GNU GPL, see COPYING for details.
+"""
+import getopt
+import sys
+import os
+from model import Model
+from registry import Registry
+
+def usage():
+    """Print the usage.
+    """
+    print """Usage: plunger [options] <input name> <output name>
+Possible options are:
+--help              -h          Display this help text.
+--debug             -d          Print debugging output.
+--in=<format>       -i <format> Input file is in <format>. [default: collada]
+--out=<format>      -o <format> Convert to <format>.       [default: collada]
+--display-formats   -D          List supported input/output formats.
+"""
+
+def displayFormats(reg):
+    """Display import and export formats currently supported by plunger
+    """
+    print "Supported import formats: %s" % ", ".join(reg.getImportFormats())
+    print "Supported export formats: %s" % ", ".join(reg.getExportFormats())
+
+def loadPlugins(reg):
+    """Loads all file format plugins from the plugin dir and registers them
+    with the registry.
+    """
+    plugins = []
+    for filename in os.listdir("plugins"):
+        name, ext = os.path.splitext(filename)
+        if ext == ".py":
+            plugins.append(name)
+
+    sys.path.append("plugins")
+
+    for plugin in plugins:
+        module = __import__(plugin)
+        module.register(reg)
+
+    sys.path.pop()
+
+def main(argv):
+    input_format = None
+    output_format = None
+    _debug = 0
+    _reg = Registry()
+
+    try:
+        opts, args = getopt.getopt(argv, "hdi:o:D",
+            ["help","debug","in=","out=","display-formats"])
+    except getopt.GetoptError:
+        usage()
+        sys.exit(2)
+
+    loadPlugins(_reg)
+
+    for opt, arg in opts:
+        if opt in ("-h", "--help"):
+            usage()
+            sys.exit()
+        elif opt in ("-d", "--debug"):
+            _debug = 1
+        elif opt in ("-i", "--in="):
+            input_format = arg
+            if not input_format in _reg.getImportFormats():
+                print "Error, format '%s' is not supported." % input_format
+                sys.exit(10)
+        elif opt in ("-o", "--out="):
+            output_format = arg
+            if not output_format in _reg.getExportFormats():
+                print "Error, format '%s' is not supported." % output_format
+                sys.exit(11)
+        elif opt in ("-D", "--display-formats"):
+            displayFormats(_reg)
+            sys.exit(0)
+
+    if len(args) < 2:
+        usage()
+        sys.exit(23)
+
+    if not input_format: input_format = "collada"
+    if not output_format: output_format = "collada"
+
+    m = Model(_reg, args[0], args[1], input_format, output_format)
+
+if __name__ == "__main__":
+    main(sys.argv[1:])
