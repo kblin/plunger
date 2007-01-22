@@ -15,56 +15,44 @@
 # You should have received a copy of the GNU General Public License along with
 # this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-"""The plunger file handler for the Collada format.
+"""The plunger file handler for writing information about the model to stdout.
 
-The module supports import and export.
+The module supports export only, as there's no easy way to create a model from a
+rough description. This is done by a different component called "artist".
 """
+
+import sys
 
 try:
     from plunger import toolbox
 except ImportError:
-    import sys
     sys.path.append("..")
     import toolbox
     sys.path.pop()
 
-from collada_plugin.parser import Parser
-from collada_plugin.generator import Generator
-
-format = "collada"
-ext = ".dae"
+format = "info"
+ext = ""
 needs_dir = False
-does_import = True
+does_import = False
 does_export = True
+version = "0.0.1"
 
 def importAsset(model, asset):
-    """Import a collada .dae file.
-    """
-    from xml.dom import minidom
-    sock = toolbox.openAny(asset)
-    xmldom = minidom.parse(sock)
-    sock.close()
-    p = Parser(model)
-    p.parse(xmldom)
+    raise NotImplementedError
 
 def exportAsset(model, asset):
+    out = toolbox.writeAny(asset)
+    out.write("Plunger Info plugin version %s\n" % version)
+    out.write("Printing information about the asset.\n")
+    exportAssetInformation(model, out)
+    out.close()
 
-    g = Generator()
-    g.generate(model)
+def exportAssetInformation(model, out):
+    out.write("Author: %s\n" % model.getRoot().getAssetInfo("author"))
+    out.write("Title: %s\n" % model.getRoot().getAssetInfo("title"))
+    out.write("Keywords: %s\n" % model.getRoot().getAssetInfo("keywords"))
+    out.write("Asset copyright information: %s\n" %
+    model.getRoot().getAssetInfo("copyright"))
 
-    import sys
-    file = None
-    try:
-        file = toolbox.writeAny(asset)
-    except IOError:
-        print "Failed to open '%s' for writing" % asset
-        sys.exit(1)
-
-    try:
-        file.write(g.toxml())
-        file.close()
-    except IOError:
-        print "Writing '%s' failed." % asset
-        sys.exit(1)
 
 

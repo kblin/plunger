@@ -1,0 +1,125 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2007 by Kai Blin
+#
+# Plunger is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; version 2 of the License.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
+"""Generate Collada XML output from a Plunger DOM
+"""
+
+class Generator:
+    def __init__(self, indent_depth=4):
+        self.out_string = ""
+        self.indent_depth = indent_depth
+
+    def indent(self, depth):
+        indent_string = " " * (depth * self.indent_depth)
+        self.append(indent_string)
+
+    def append(self, string):
+        self.out_string += string
+
+    def toxml(self):
+        return self.out_string
+
+    def generate(self, node, depth=0):
+        """Dispatch a function to generate XML for a specific node
+        """
+        if not node:
+            return
+
+        handler_function = getattr(self, "do_%s" % node.getType())
+        handler_function(node, depth)
+
+    def do_Model(self, node, depth):
+        self.append('<?xml version="1.0"?>\n')
+        self.generate(node.model_tree_root, 0)
+
+    def do_COLLADA(self, node, depth):
+        self.indent(depth)
+        self.append('<COLLADA')
+        self.append(' version="%s"' % node.version)
+        if node.xmlns:
+            self.append(' xmlns="%s"' % node.xmlns)
+        if node.base:
+            self.append(' base="%s"' % node.base)
+        self.append('>\n')
+
+        if node.asset:
+            self.generate(node.asset, depth+1)
+
+        self.indent(depth)
+        self.append('</COLLADA>\n')
+
+    def do_Asset(self, node, depth):
+        self.indent(depth)
+        self.append('<asset>\n')
+
+        if node.contributor:
+            self.generate(node.contributor, depth+1)
+        if node.created:
+            self.indent(depth+1)
+            self.append('<created>%s</created>\n' % node.created)
+        if node.keywords:
+            self.indent(depth+1)
+            self.append('<keywords>%s</keywords>\n' % " ".join(node.keywords))
+        if node.modified:
+            self.indent(depth+1)
+            self.append('<modified>%s</modified>\n' % node.modified)
+        if node.revision:
+            self.indent(depth+1)
+            self.append('<revision>%s</revision>\n' % node.revision)
+        if node.subject:
+            self.indent(depth+1)
+            self.append('<subject>%s</subject>\n' % node.subject)
+        if node.title:
+            self.indent(depth+1)
+            self.append('<title>%s</title>\n' % node.title)
+        if node.unit:
+            self.indent(depth+1)
+            self.append('<unit')
+            if "name" in node.unit:
+                self.append(' name="%s"' % node.unit['name'])
+            if "meter" in node.unit:
+                self.append(' meter="%s"' % node.unit['meter'])
+            self.append(' />\n')
+        if node.up_axis:
+            self.indent(depth+1)
+            self.append('<up_axis>%s</up_axis>\n'% node.up_axis)
+
+        self.indent(depth)
+        self.append('</asset>\n')
+
+    def do_Contributor(self, node, depth):
+        self.indent(depth)
+        self.append('<contributor>\n')
+        if node.author:
+            self.indent(depth+1)
+            self.append('<author>%s</author>\n' % node.author)
+        if node.authoring_tool:
+            self.indent(depth+1)
+            self.append('<authoring_tool>%s</authoring_tool>\n' % node.authoring_tool)
+        if node.comments:
+            self.indent(depth+1)
+            self.append('<comments>%s</comments>\n' % node.comments)
+        if node.copyright:
+            self.indent(depth+1)
+            self.append('<copyright>%s</copyright>\n' % node.copyright)
+        if node.source_data:
+            self.indent(depth+1)
+            self.append('<source_data>%s</source_data>\n' % node.source_data)
+
+        self.indent(depth)
+        self.append('</contributor>\n')
+

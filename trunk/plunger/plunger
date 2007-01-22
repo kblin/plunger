@@ -26,8 +26,11 @@ Plunger is covered under the GNU GPL, see COPYING for details.
 import getopt
 import sys
 import os
-from model import Model
-import registry
+
+try:
+    from plunger import core
+except ImportError:
+    import core
 
 def usage():
     """Print the usage.
@@ -37,15 +40,15 @@ Possible options are:
 --help              -h          Display this help text.
 --debug             -d          Print debugging output.
 --in=<format>       -i <format> Input file is in <format>. [default: collada]
---out=<format>      -o <format> Convert to <format>.       [default: collada]
+--out=<format>      -o <format> Convert to <format>.       [default: info]
 --display-formats   -D          List supported input/output formats.
 """
 
 def displayFormats():
     """Display import and export formats currently supported by plunger
     """
-    print "Supported import formats: %s" % ", ".join(registry.getImportFormats())
-    print "Supported export formats: %s" % ", ".join(registry.getExportFormats())
+    print "Supported import formats: %s" % ", ".join(core.getImportFormats())
+    print "Supported export formats: %s" % ", ".join(core.getExportFormats())
 
 def main(argv):
     input_format = None
@@ -59,7 +62,7 @@ def main(argv):
         usage()
         sys.exit(2)
 
-    registry.loadPlugins("plugins")
+    core.loadPlugins()
 
     for opt, arg in opts:
         if opt in ("-h", "--help"):
@@ -69,12 +72,12 @@ def main(argv):
             _debug = 1
         elif opt in ("-i", "--in="):
             input_format = arg
-            if not input_format in registry.getImportFormats():
+            if not input_format in core.getImportFormats():
                 print "Error, format '%s' is not supported." % input_format
                 sys.exit(10)
         elif opt in ("-o", "--out="):
             output_format = arg
-            if not output_format in registry.getExportFormats():
+            if not output_format in core.getExportFormats():
                 print "Error, format '%s' is not supported." % output_format
                 sys.exit(11)
         elif opt in ("-D", "--display-formats"):
@@ -86,9 +89,9 @@ def main(argv):
         sys.exit(23)
 
     if not input_format: input_format = "collada"
-    if not output_format: output_format = "collada"
+    if not output_format: output_format = "info"
 
-    m = Model(_reg, args[0], args[1], input_format, output_format)
+    core.convert(args[0], input_format, args[1], output_format)
 
 if __name__ == "__main__":
     main(sys.argv[1:])

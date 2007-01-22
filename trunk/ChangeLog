@@ -1,3 +1,32 @@
+2007-01-22  Kai Blin  <kai.blin@gmail.com>
+	* plugins/collada.py: Use Generator to generate XML files
+	* plugins/collada_plugin/generator.py: Generator for Collada XML files.
+	* plugins/collada_plugin/parser.py: Parse <asset> tags, including all
+	  children
+
+2007-01-22  Kai Blin  <kai.blin@gmail.com>
+	* __init__.py: Added to make plunger a module.
+	* core.py: Core functionality of plunger seperated from the TUI now.
+	* dom.py: New in memory model. Still close to the Collada format.
+	* model.py: Not needed anymore, deleting.
+	* plugins/collada.py: use collada_plugin module for collada-specific helpers
+	* plugins/collada_plugin/parser.py: Simple parser to translate from xml to
+	  the plunger DOM.
+	* plugins/md3.py: Add some utility functions.
+	* plugins/info.py: Make use of toolbox.writeAny() to write to a file, too.
+	* plunger: use core to do things.
+	* tests/*.dae: Added some models from the collada test bench. These models
+	  are covered by the SCEA shared source license 1.0.
+	* tests/simplegrave.md3: Add md3 file for testing.
+
+2007-01-18  Kai Blin  <kai.blin@gmail.com>
+	* plugins/md3.py: add more function stubs
+	* model.py: fix up registry import
+	* plugins/collada.py: fix up missed parameters
+	* plugins/info.py: Add a small plugin that prints out some basic info about
+	  the asset loaded.
+	* plunger: default to info output if nothing is specified.
+
 2007-01-18  Kai Blin  <kai.blin@gmail.com>
 	* plugins/collada.py, plugins/md3.py: No class needed.
 	* registry.py: No class needed, take care of loading the plugins.
