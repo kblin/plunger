@@ -44,3 +44,14 @@ def openAny(source):
     import StringIO
     return StringIO.StringIO(str(source))
 
+def writeAny(dest):
+    """Openy any type of destination for writing
+    """
+    if hasattr(dest, "write"):
+        return dest
+
+    if dest == "-":
+        import sys
+        return sys.stdout
+
+    return open(dest, 'w')
