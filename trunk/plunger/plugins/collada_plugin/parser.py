@@ -140,11 +140,139 @@ class Parser:
         if node.firstChild:
             parent.created = node.firstChild.nodeValue
 
+    def do_extras(self, node, parent):
+        """handle the <extras> tag
+        """
+        #cheat and just store the xml code for now
+        exras = dom.Extras()
+        scenes.collada_xml = node.toxml()
+        parent.scenes = scenes
+
     def do_keywords(self, node, parent):
         """Handle the <keywords> tag
         """
         if node.firstChild:
             parent.created = node.firstChild.nodeValue.split(" ")
+
+    def do_library_animations(self, node, parent):
+        """handle the <library_animations> tag
+        """
+        #cheat and just store the xml code for now
+        animations = dom.LibraryAnimations()
+        animations.collada_xml = node.toxml()
+        parent.animations = animations
+
+    def do_library_animation_clips(self, node, parent):
+        """handle the <library_animation_clips> tag
+        """
+        #cheat and just store the xml code for now
+        clips = dom.LibraryAnimationClips()
+        clips.collada_xml = node.toxml()
+        parent.clips = clips
+
+    def do_library_cameras(self, node, parent):
+        """handle the <library_cameras> tag
+        """
+        #cheat and just store the xml code for now
+        cameras = dom.LibraryCameras()
+        cameras.collada_xml = node.toxml()
+        parent.cameras = cameras
+
+    def do_library_controllers(self, node, parent):
+        """handle the <library_controllers> tag
+        """
+        #cheat and just store the xml code for now
+        controllers = dom.LibraryControllers()
+        controllers.collada_xml = node.toxml()
+        parent.controllers =  controllers
+
+    def do_library_effects(self, node, parent):
+        """handle the <library_effects> tag
+        """
+        #cheat and just store the xml code for now
+        effects = dom.LibraryEffects()
+        effects.collada_xml = node.toxml()
+        parent.effects = effects
+
+    def do_library_force_fields(self, node, parent):
+        """handle the <library_force_fields> tag
+        """
+        #cheat and just store the xml code for now
+        force_fields = dom.LibraryForceFields()
+        force_fields.collada_xml = node.toxml()
+        parent.force_fields = force_fields
+
+    def do_library_geometries(self, node, parent):
+        """handle the <library_geometries> tag
+        """
+        #cheat and just store the xml code for now
+        geometries = dom.LibraryGeometries()
+        geometries.collada_xml = node.toxml()
+        parent.geometries = geometries
+
+    def do_library_images(self, node, parent):
+        """handle the <library_images> tag
+        """
+        #cheat and just store the xml code for now
+        images = dom.LibraryImages()
+        images.collada_xml = node.toxml()
+        parent.images = images
+
+    def do_library_lights(self, node, parent):
+        """handle the <library_lights> tag
+        """
+        #cheat and just store the xml code for now
+        lights = dom.LibraryLights()
+        lights.collada_xml = node.toxml()
+        parent.lights = lights
+
+    def do_library_materials(self, node, parent):
+        """handle the <library_materials> tag
+        """
+        #cheat and just store the xml code for now
+        materials = dom.LibraryMaterials()
+        materials.collada_xml = node.toxml()
+        parent.materials = materials
+
+    def do_library_nodes(self, node, parent):
+        """handle the <library_nodes> tag
+        """
+        #cheat and just store the xml code for now
+        nodes = dom.LibraryNodes()
+        nodes.collada_xml = node.toxml()
+        parent.nodes = nodes
+
+    def do_library_physics_materials(self, node, parent):
+        """handle the <library_physics_materials> tag
+        """
+        #cheat and just store the xml code for now
+        physics_materials = dom.LibraryPhysicsMaterials()
+        physics_materials.collada_xml = node.toxml()
+        parent.physics_materials = physics_materials
+
+    def do_library_physics_models(self, node, parent):
+        """handle the <library_physics_models> tag
+        """
+        #cheat and just store the xml code for now
+        physics_models = dom.LibraryPhysicsModels()
+        physics_models.collada_xml = node.toxml()
+        parent.physics_models = physics_models
+
+    def do_library_physics_scenes(self, node, parent):
+        """handle the <library_physics_scenes> tag
+        """
+        #cheat and just store the xml code for now
+        physics_scenes = dom.LibraryPhysicsScenes()
+        physics_scenes.collada_xml = node.toxml()
+        parent.physics_scenes = physics_scenes
+
+    def do_library_visual_scenes(self, node, parent):
+        """handle the <library_effects> tag
+        """
+        #cheat and just store the xml code for now
+        visual_scenes = dom.LibraryVisualScenes()
+        visual_scenes.collada_xml = node.toxml()
+        parent.visual_scenes = visual_scenes
 
     def do_modified(self, node, parent):
         """Handle the <modified> tag
@@ -157,6 +285,14 @@ class Parser:
         """
         if node.firstChild:
             parent.revision = node.firstChild.nodeValue
+
+    def do_scene(self, node, parent):
+        """handle the <scene> tag
+        """
+        #cheat and just store the xml code for now
+        scene = dom.Scene()
+        scene.collada_xml = node.toxml()
+        parent.scene = scene
 
     def do_source_data(self, node, parent):
         """Handle the <source_data> tag

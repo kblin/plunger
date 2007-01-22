@@ -58,6 +58,40 @@ class Generator:
 
         if node.asset:
             self.generate(node.asset, depth+1)
+        if node.animations:
+            self.generate(node.animations, depth+1)
+        if node.clips:
+            self.generate(node.clips, depth+1)
+        if node.cameras:
+            self.generate(node.cameras, depth+1)
+        if node.controllers:
+            self.generate(node.controllers, depth+1)
+        if node.effects:
+            self.generate(node.effects, depth+1)
+        if node.force_fields:
+            self.generate(node.force_fields, depth+1)
+        if node.geometries:
+            self.generate(node.geometries, depth+1)
+        if node.images:
+            self.generate(node.images, depth+1)
+        if node.lights:
+            self.generate(node.lights, depth+1)
+        if node.materials:
+            self.generate(node.materials, depth+1)
+        if node.nodes:
+            self.generate(node.nodes, depth+1)
+        if node.physics_materials:
+            self.generate(node.physics_materials, depth+1)
+        if node.physics_models:
+            self.generate(node.physics_models, depth+1)
+        if node.physics_scenes:
+            self.generate(node.physics_scenes, depth+1)
+        if node.visual_scenes:
+            self.generate(node.visual_scenes, depth+1)
+        if node.scene:
+            self.generate(node.scene, depth+1)
+        if node.extras:
+            self.generate(node.extras, depth+1)
 
         self.indent(depth)
         self.append('</COLLADA>\n')
@@ -122,4 +156,72 @@ class Generator:
 
         self.indent(depth)
         self.append('</contributor>\n')
+
+    def do_Extras(self, node, depth):
+        self.indent(depth)
+        self.append(node.collada_xml)
+
+    def do_LibraryAnimations(self, node, depth):
+        self.indent(depth)
+        self.append(node.collada_xml)
+
+    def do_LibraryAnimationClips(self, node, depth):
+        self.indent(depth)
+        self.append(node.collada_xml)
+
+    def do_LibraryCameras(self, node, depth):
+        self.indent(depth)
+        self.append(node.collada_xml)
+
+    def do_LibraryControllers(self, node, depth):
+        self.indent(depth)
+        self.append(node.collada_xml)
+
+    def do_LibraryEffects(self, node, depth):
+        self.indent(depth)
+        self.append(node.collada_xml)
+
+    def do_LibraryForceFields(self, node, depth):
+        self.indent(depth)
+        self.append(node.collada_xml)
+
+    def do_LibraryGeometries(self, node, depth):
+        self.indent(depth)
+        self.append(node.collada_xml)
+
+    def do_LibraryImages(self, node, depth):
+        self.indent(depth)
+        self.append(node.collada_xml)
+
+    def do_LibraryLights(self, node, depth):
+        self.indent(depth)
+        self.append(node.collada_xml)
+
+    def do_LibraryMaterials(self, node, depth):
+        self.indent(depth)
+        self.append(node.collada_xml)
+
+    def do_LibraryNodes(self, node, depth):
+        self.indent(depth)
+        self.append(node.collada_xml)
+
+    def do_LibraryPhysicalMaterials(self, node, depth):
+        self.indent(depth)
+        self.append(node.collada_xml)
+
+    def do_LibraryPhysicalModels(self, node, depth):
+        self.indent(depth)
+        self.append(node.collada_xml)
+
+    def do_LibraryPhysicalScenes(self, node, depth):
+        self.indent(depth)
+        self.append(node.collada_xml)
+
+    def do_LibraryVisualScenes(self, node, depth):
+        self.indent(depth)
+        self.append(node.collada_xml)
+
+    def do_Scene(self, node, depth):
+        self.indent(depth)
+        self.append(node.collada_xml)
 

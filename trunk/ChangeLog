@@ -1,4 +1,8 @@
 2007-01-22  Kai Blin  <kai.blin@gmail.com>
+	* collada_plugin/generator.py, collada_plugin/generator.py: Cheat around
+	  unhandled nodes so we at least reexport complete, valid collada xml.
+
+2007-01-22  Kai Blin  <kai.blin@gmail.com>
 	* plugins/collada.py: Use Generator to generate XML files
 	* plugins/collada_plugin/generator.py: Generator for Collada XML files.
 	* plugins/collada_plugin/parser.py: Parse <asset> tags, including all

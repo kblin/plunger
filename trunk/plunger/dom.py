@@ -58,6 +58,23 @@ class COLLADA(PlungerNode):
         self.version = "0.0.0"
         self.xmlns = None
         self.base = None
+        self.animations = None
+        self.clips = None
+        self.cameras = None
+        self.controllers = None
+        self.effects = None
+        self.extras = None
+        self.force_fields = None
+        self.geometries = None
+        self.images = None
+        self.lights = None
+        self.materials = None
+        self.nodes = None
+        self.physics_materials = None
+        self.physics_models = None
+        self.physics_scenes = None
+        self.visual_scenes = None
+        self.scene = None
 
 class Asset(PlungerNode):
     def __init__(self):
