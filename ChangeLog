@@ -1,5 +1,9 @@
 2007-01-25  Kai Blin  <kai.blin@gmail.com>
 	* collada_plugin/generator.py, collada_plugin/generator.py, dom.py: Handle
+	  the <vertices>, <input>, <lines> and <p> tags.
+
+2007-01-25  Kai Blin  <kai.blin@gmail.com>
+	* collada_plugin/generator.py, collada_plugin/generator.py, dom.py: Handle
 	  the <source> and <(IDREF|Name|bool|float|int)_array> tags.
 
 2007-01-25  Kai Blin  <kai.blin@gmail.com>
