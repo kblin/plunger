@@ -57,41 +57,59 @@ class Generator:
         self.append('>\n')
 
         if node.asset:
-            self.generate(node.asset, depth+1)
+            #self.generate(node.asset, depth+1)
+            pass
         if node.animations:
-            self.generate(node.animations, depth+1)
+            #self.generate(node.animations, depth+1)
+            pass
         if node.clips:
-            self.generate(node.clips, depth+1)
+            #self.generate(node.clips, depth+1)
+            pass
         if node.cameras:
-            self.generate(node.cameras, depth+1)
+            #self.generate(node.cameras, depth+1)
+            pass
         if node.controllers:
-            self.generate(node.controllers, depth+1)
+            #self.generate(node.controllers, depth+1)
+            pass
         if node.effects:
-            self.generate(node.effects, depth+1)
+            #self.generate(node.effects, depth+1)
+            pass
         if node.force_fields:
-            self.generate(node.force_fields, depth+1)
+            #self.generate(node.force_fields, depth+1)
+            pass
         if node.geometries:
             self.generate(node.geometries, depth+1)
+            pass
         if node.images:
-            self.generate(node.images, depth+1)
+            #self.generate(node.images, depth+1)
+            pass
         if node.lights:
-            self.generate(node.lights, depth+1)
+            #self.generate(node.lights, depth+1)
+            pass
         if node.materials:
-            self.generate(node.materials, depth+1)
+            #self.generate(node.materials, depth+1)
+            pass
         if node.nodes:
-            self.generate(node.nodes, depth+1)
+            #self.generate(node.nodes, depth+1)
+            pass
         if node.physics_materials:
-            self.generate(node.physics_materials, depth+1)
+            #self.generate(node.physics_materials, depth+1)
+            pass
         if node.physics_models:
-            self.generate(node.physics_models, depth+1)
+            #self.generate(node.physics_models, depth+1)
+            pass
         if node.physics_scenes:
-            self.generate(node.physics_scenes, depth+1)
+            #self.generate(node.physics_scenes, depth+1)
+            pass
         if node.visual_scenes:
-            self.generate(node.visual_scenes, depth+1)
+            #self.generate(node.visual_scenes, depth+1)
+            pass
         if node.scene:
-            self.generate(node.scene, depth+1)
+            #self.generate(node.scene, depth+1)
+            pass
         if node.extras:
             self.generate(node.extras, depth+1)
+            pass
 
         self.indent(depth)
         self.append('</COLLADA>\n')
@@ -157,9 +175,29 @@ class Generator:
         self.indent(depth)
         self.append('</contributor>\n')
 
+    def do_ConvexMesh(self, node, depth):
+        self.indent(depth)
+        self.append('<convex_mesh />\n')
+
     def do_Extras(self, node, depth):
         self.indent(depth)
         self.append(node.collada_xml)
+
+    def do_Geometry(self, node, depth):
+        self.indent(depth)
+        self.append('<geometry')
+        if node.name:
+            self.append(' name="%s"' % node.name)
+        if node.id:
+            self.append(' id="%s"' % node.id)
+
+        self.append('>\n')
+
+        if node.content:
+            self.generate(node.content, depth+1)
+
+        self.indent(depth)
+        self.append('</geometry>\n')
 
     def do_LibraryAnimations(self, node, depth):
         self.indent(depth)
@@ -187,7 +225,9 @@ class Generator:
 
     def do_LibraryGeometries(self, node, depth):
         self.indent(depth)
-        self.append(node.collada_xml)
+        self.append('<libarary_geometries>\n')
+        for geometry in node.geometries:
+            self.generate(geometry, depth+1)
 
     def do_LibraryImages(self, node, depth):
         self.indent(depth)
@@ -220,6 +260,11 @@ class Generator:
     def do_LibraryVisualScenes(self, node, depth):
         self.indent(depth)
         self.append(node.collada_xml)
+
+    def do_Mesh(self, node, depth):
+        self.indent(depth)
+        self.append('<mesh />\n')
+
 
     def do_Scene(self, node, depth):
         self.indent(depth)

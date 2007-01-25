@@ -148,6 +148,21 @@ class Parser:
         scenes.collada_xml = node.toxml()
         parent.scenes = scenes
 
+    def do_geometry(self, node, parent):
+        """Handle the <geometry> tag
+        """
+        geometry = dom.Geometry()
+        parent.geometries.append(geometry)
+        geometry.parent = parent
+        keys = node.attributes.keys()
+        if "name" in keys:
+            geometry.name = node.attributes['name'].nodeValue
+        if "id" in keys:
+            geometry.id = node.attributes['id'].nodeValue
+
+        for child in node.childNodes:
+            self.parse(child, geometry)
+
     def do_keywords(self, node, parent):
         """Handle the <keywords> tag
         """
@@ -205,10 +220,11 @@ class Parser:
     def do_library_geometries(self, node, parent):
         """handle the <library_geometries> tag
         """
-        #cheat and just store the xml code for now
         geometries = dom.LibraryGeometries()
-        geometries.collada_xml = node.toxml()
         parent.geometries = geometries
+        geometries.parent = parent
+        for child in node.childNodes:
+            self.parse(child, geometries)
 
     def do_library_images(self, node, parent):
         """handle the <library_images> tag
@@ -273,6 +289,16 @@ class Parser:
         visual_scenes = dom.LibraryVisualScenes()
         visual_scenes.collada_xml = node.toxml()
         parent.visual_scenes = visual_scenes
+
+    def do_mesh(self, node, parent):
+        """Handle the <mesh> tag
+        """
+        mesh = dom.Mesh()
+        mesh.parent = parent
+        parent.content = mesh
+
+        for child in node.childNodes:
+            self.parse(child, mesh)
 
     def do_modified(self, node, parent):
         """Handle the <modified> tag

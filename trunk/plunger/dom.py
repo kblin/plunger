@@ -26,7 +26,7 @@ class PlungerNode:
         self.children = []
         self.attributes = {}
         self.asset = None
-        self.collada_xml = None
+        self.collada_xml = ""
 
     def getType(self):
         return self.__class__.__name__
@@ -107,14 +107,25 @@ class Asset(PlungerNode):
 
 class Contributor(PlungerNode):
     def __init__(self):
+        PlungerNode.__init__(self)
         self.author = ""
         self.authoring_tool = ""
         self.comment = ""
         self.copyright = ""
         self.source_date = ""
 
+class ConvexMesh(PlungerNode):
+    pass
+
 class Extra(PlungerNode):
     pass
+
+class Geometry(PlungerNode):
+    def __init__(self):
+        PlungerNode.__init__(self)
+        self.name = ""
+        self.id = ""
+        self.content = None
 
 class LibraryAnimations(PlungerNode):
     pass
@@ -135,7 +146,9 @@ class LibraryForceFields(PlungerNode):
     pass
 
 class LibraryGeometries(PlungerNode):
-    pass
+    def __init__(self):
+        PlungerNode.__init__(self)
+        self.geometries = []
 
 class LibraryImages(PlungerNode):
     pass
@@ -161,6 +174,22 @@ class LibraryPhysicsScenes(PlungerNode):
 class LibraryVisualScenes(PlungerNode):
     pass
 
+class Mesh(PlungerNode):
+    def __init__(self):
+        PlungerNode.__init__(self)
+        self.sources = []
+        self.vertices = []
+        self.lines = []
+        self.linestrips = []
+        self.polygons = []
+        self.polylists = []
+        self.triangles = []
+        self.trifans = []
+        self.tristrips = []
+
 class Scene(PlungerNode):
+    pass
+
+class Spline(PlungerNode):
     pass
 
