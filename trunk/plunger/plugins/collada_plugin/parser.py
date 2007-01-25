@@ -399,6 +399,25 @@ class Parser:
         for child in node.childNodes:
             self.parse(child, lines)
 
+    def do_linestrips(self, node, parent):
+        """Handle the <linestrips> tag
+        """
+        linestripss = dom.Linestrips()
+        linestrips.parent = parent
+        parent.linestrips.append(linestrips)
+        keys = node.attributes.keys()
+        count = 0
+        if "name" in keys:
+            linestrips.name = node.attributes['name'].nodeValue
+        if "material" in keys:
+            linestrips.material = node.attributes['material'].nodeValue
+        if "count" in keys:
+            count = int(node.attributes['count'].nodeValue)
+
+        for child in node.childNodes:
+            self.parse(child, linestrips)
+
+
     def do_mesh(self, node, parent):
         """Handle the <mesh> tag
         """
