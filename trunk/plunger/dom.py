@@ -148,6 +148,14 @@ class IDREFArray(PlungerNode):
         self.id = ""
         self.name = ""
 
+class Input(PlungerNode):
+    def __init__(self):
+        PlungerNode.__init__(self)
+        self.offset = 0
+        self.semantic = ""
+        self.source = ""
+        self.set = 0
+
 class IntArray(PlungerNode):
     def __init__(self):
         PlungerNode.__init__(self)
@@ -206,6 +214,14 @@ class LibraryPhysicsScenes(PlungerNode):
 class LibraryVisualScenes(PlungerNode):
     pass
 
+class Lines(PlungerNode):
+    def __init__(self):
+        PlungerNode.__init__(self)
+        self.inputs = []
+        self.primitives = []
+        self.name = ""
+        self.material = ""
+
 class Mesh(PlungerNode):
     def __init__(self):
         PlungerNode.__init__(self)
@@ -241,3 +257,9 @@ class Source(PlungerNode):
 class Spline(PlungerNode):
     pass
 
+class Vertices(PlungerNode):
+    def __init__(self):
+        PlungerNode.__init__(self)
+        self.inputs = []
+        self.id = ""
+        self.name = ""

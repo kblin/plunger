@@ -216,6 +216,22 @@ class Parser:
         if node.firstChild:
             idref.values = node.firstChild.nodeValue.split()[:count]
 
+    def do_input(self, node, parent):
+        """Handle the <input> tag
+        """
+        input = dom.Input()
+        parent.inputs.append(input)
+        input.parent = parent
+        keys = node.attributes.keys()
+        if "offset" in keys:
+            input.offset = node.attributes['offset'].nodeValue
+        if "semantic" in keys:
+            input.semantic = node.attributes['semantic'].nodeValue
+        if "source" in keys:
+            input.source = node.attributes['source'].nodeValue
+        if "set" in keys:
+            input.offset = node.attributes['set'].nodeValue
+
     def do_int_array(self, node, parent):
         """Handle the <int_array> tag
         """
@@ -365,6 +381,24 @@ class Parser:
         visual_scenes.collada_xml = node.toxml()
         parent.visual_scenes = visual_scenes
 
+    def do_lines(self, node, parent):
+        """Handle the <lines> tag
+        """
+        lines = dom.Lines()
+        lines.parent = parent
+        parent.lines.append(lines)
+        keys = node.attributes.keys()
+        count = 0
+        if "name" in keys:
+            lines.name = node.attributes['name'].nodeValue
+        if "material" in keys:
+            lines.material = node.attributes['material'].nodeValue
+        if "count" in keys:
+            count = int(node.attributes['count'].nodeValue)
+
+        for child in node.childNodes:
+            self.parse(child, lines)
+
     def do_mesh(self, node, parent):
         """Handle the <mesh> tag
         """
@@ -397,6 +431,13 @@ class Parser:
             count = int(node.attributes['count'].nodeValue)
         if node.firstChild:
             name_array.values = node.firstChild.nodeValue.split()[:count]
+
+    def do_p(self, node, parent):
+        """Handle the <p> primitives tag
+        """
+        if node.firstChild:
+            parent.primitves.append([ int(i) for i in
+                node.firstChild.nodeValue.split()])
 
     def do_revision(self, node, parent):
         """Handle the <revision> tag
@@ -460,6 +501,19 @@ class Parser:
         if node.firstChild:
             parent.up_axis = node.firstChild.nodeValue
 
+    def do_vertices(self, node, parent):
+        """Handle the <vertices> tag
+        """
+        vertices = dom.Vertices()
+        parent.vertices.append(vertices)
+        vertices.parent = parent
+        keys = node.attributes.keys()
+        if "id" in keys:
+            vertices.id = node.attributes['id'].nodeValue
+        if "name" in keys:
+            vertices.name = node.attributes['name'].nodeValue
 
+        for child in node.childNodes:
+            self.parse(child, vertices)
 
 

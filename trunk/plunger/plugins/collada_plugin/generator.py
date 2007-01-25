@@ -233,6 +233,21 @@ class Generator:
         self.append('>%s' % " ".join(node.values))
         self.append('</IDREF_array>\n')
 
+    def do_Input(self, node, depth):
+        """Create Collada <input> tags
+        """
+        self.indent(depth)
+        self.append('<input')
+        if node.offset:
+            self.append(' offset="%s"' % node.offset)
+        if node.semantic:
+            self.append(' semantic="%s"' % node.semantic)
+        if node.source:
+            self.append(' source="%s"' % node.source)
+        if node.set:
+            self.append(' set="%s"' % node.set)
+        self.append(' />\n')
+
     def do_IntArray(self, node, depth):
         self.indent(depth)
         self.append('<int_array count="%s"' % len(node.values))
@@ -307,14 +322,26 @@ class Generator:
         self.indent(depth)
         self.append(node.collada_xml)
 
+    def do_Lines(self, node, depth):
+        self.indent(depth)
+        self.append('<lines count="%s"' % node.count)
+        if node.name:
+            self.append(' name="%s"' % node.name)
+        if node.material:
+            self.append(' material="%s"' % node.material)
+        self.append('>\n')
+
+        for prim in node.primitives:
+            self.indent(depth+1)
+            self.append('<p>%s</p>\n' % " ".join(["%s" % s for s in prim]))
+
     def do_Mesh(self, node, depth):
         self.indent(depth)
         self.append('<mesh>\n')
         for source in node.sources:
             self.generate(source, depth+1)
-        if node.vertices:
-            self.indent(depth+1)
-            self.append('<vertices />\n')
+        for vertex in node.vertices:
+            self.generate(vertex, depth+1)
         for line in node.lines:
             self.generate(line, depth+1)
         for strip in node.linestrips:
@@ -362,3 +389,15 @@ class Generator:
         self.indent(depth)
         self.append('</source>\n')
 
+    def do_Vertices(self, node, depth):
+        """Create Collada tags for the vertices
+        """
+        self.indent(depth)
+        self.append('<vertices id="%s"'% node.id)
+        if node.name:
+            self.append(' name="%s"' %node.name)
+        self.append('>\n')
+        for input in node.inputs:
+            self.generate(input, depth+1)
+        self.indent(depth)
+        self.append('</vertices>\n')
