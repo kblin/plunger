@@ -1,3 +1,7 @@
+2007-01-25  Kai Blin  <kai.blin@gmail.com>
+	* collada_plugin/generator.py, collada_plugin/generator.py, dom.py: Handle
+	  the <library_geometries>, <geometry> and <mesh> tags.
+
 2007-01-22  Kai Blin  <kai.blin@gmail.com>
 	* collada_plugin/generator.py, collada_plugin/generator.py: Cheat around
 	  unhandled nodes so we at least reexport complete, valid collada xml.
