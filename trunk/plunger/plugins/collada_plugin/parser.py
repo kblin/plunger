@@ -112,6 +112,24 @@ class Parser:
         if node.firstChild:
             parent.authoring_tool = node.firstChild.nodeValue
 
+    def do_bool_array(self, node, parent):
+        """Handle the <bool_array> tag
+        """
+        bool = dom.BoolArray()
+        parent.content_array = bool
+        bool.parent = parent
+        keys = node.attributes.keys()
+        count = 0
+        if "name" in keys:
+            bool.name = node.attributes['name'].nodeValue
+        if "id" in keys:
+            bool.id = node.attributes['id'].nodeValue
+        if "count" in keys:
+            count = int(node.attributes['count'].nodeValue)
+        if node.firstChild:
+            bool.values = [b == "true" for b in
+                node.firstChild.nodeValue.split()[:count]]
+
     def do_comments(self, node, parent):
         """Handle the <comments> tag
         """
@@ -148,6 +166,24 @@ class Parser:
         scenes.collada_xml = node.toxml()
         parent.scenes = scenes
 
+    def do_float_array(self, node, parent):
+        """Handle the <float_array> tag
+        """
+        float_array = dom.FloatArray()
+        parent.content_array = float_array
+        float_array.parent = parent
+        keys = node.attributes.keys()
+        count = 0
+        if "name" in keys:
+            float_array.name = node.attributes['name'].nodeValue
+        if "id" in keys:
+            float_array.id = node.attributes['id'].nodeValue
+        if "count" in keys:
+            count = int(node.attributes['count'].nodeValue)
+        if node.firstChild:
+            float_array.values = [float(f) for f in
+                node.firstChild.nodeValue.split()[:count]]
+
     def do_geometry(self, node, parent):
         """Handle the <geometry> tag
         """
@@ -162,6 +198,45 @@ class Parser:
 
         for child in node.childNodes:
             self.parse(child, geometry)
+
+    def do_IDREF_array(self, node, parent):
+        """Handle the <IDEREF_array> tag
+        """
+        idref = dom.IDREFArray()
+        parent.content_array = idref
+        idref.parent = parent
+        keys = node.attributes.keys()
+        count = 0
+        if "name" in keys:
+            idref.name = node.attributes['name'].nodeValue
+        if "id" in keys:
+            idref.id = node.attributes['id'].nodeValue
+        if "count" in keys:
+            count = int(node.attributes['count'].nodeValue)
+        if node.firstChild:
+            idref.values = node.firstChild.nodeValue.split()[:count]
+
+    def do_int_array(self, node, parent):
+        """Handle the <int_array> tag
+        """
+        int_array = dom.IntArray()
+        parent.content_array = int_array
+        int_array.parent = parent
+        keys = node.attributes.keys()
+        count = 0
+        if "name" in keys:
+            int_array.name = node.attributes['name'].nodeValue
+        if "id" in keys:
+            int_array.id = node.attributes['id'].nodeValue
+        if "minInclusive" in keys:
+            int_array.minVal = node.attributes['minInclusive'].nodeValue
+        if "maxInclusive" in keys:
+            int_array.maxVal = node.attributes['maxInclusive'].nodeValue
+        if "count" in keys:
+            count = int(node.attributes['count'].nodeValue)
+        if node.firstChild:
+            int_array.values = [int(f) for f in
+                node.firstChild.nodeValue.split()[:count]]
 
     def do_keywords(self, node, parent):
         """Handle the <keywords> tag
@@ -306,6 +381,23 @@ class Parser:
         if node.firstChild:
             parent.modified = node.firstChild.nodeValue
 
+    def do_Name_array(self, node, parent):
+        """Handle the <Name_array> tag
+        """
+        name_array = dom.NameArray()
+        parent.content_array = name_array
+        name_array.parent = parent
+        keys = node.attributes.keys()
+        count = 0
+        if "name" in keys:
+            name_array.name = node.attributes['name'].nodeValue
+        if "id" in keys:
+            name_array.id = node.attributes['id'].nodeValue
+        if "count" in keys:
+            count = int(node.attributes['count'].nodeValue)
+        if node.firstChild:
+            name_array.values = node.firstChild.nodeValue.split()[:count]
+
     def do_revision(self, node, parent):
         """Handle the <revision> tag
         """
@@ -319,6 +411,21 @@ class Parser:
         scene = dom.Scene()
         scene.collada_xml = node.toxml()
         parent.scene = scene
+
+    def do_source(self, node, parent):
+        """Handle the <source> tag
+        """
+        source = dom.Source()
+        source.parent = parent
+        parent.sources.append(source)
+        keys = node.attributes.keys()
+        if "id" in keys:
+            source.id = node.attributes['id'].nodeValue
+        if "name" in keys:
+            source.name = node.attributes['name'].nodeValue
+
+        for child in node.childNodes:
+            self.parse(child, source)
 
     def do_source_data(self, node, parent):
         """Handle the <source_data> tag

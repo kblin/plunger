@@ -153,6 +153,18 @@ class Generator:
         self.indent(depth)
         self.append('</asset>\n')
 
+    def do_BoolArray(self, node, depth):
+        self.indent(depth)
+        self.append('<bool_array count="%s"' % len(node.values))
+        if node.id:
+            self.append(' id="%s"' % node.id)
+        if node.name:
+            self.append(' name="%s"' % node.name)
+        import string
+        self.append('>%s' % " ".join([string.lower("%s" %s) for s in
+            node.values]))
+        self.append('</bool_array>\n')
+
     def do_Contributor(self, node, depth):
         self.indent(depth)
         self.append('<contributor>\n')
@@ -183,6 +195,17 @@ class Generator:
         self.indent(depth)
         self.append(node.collada_xml)
 
+    def do_FloatArray(self, node, depth):
+        self.indent(depth)
+        self.append('<float_array count="%s"' % len(node.values))
+        if node.id:
+            self.append(' id="%s"' % node.id)
+        if node.name:
+            self.append(' name="%s"' % node.name)
+        import string
+        self.append('>%s' % " ".join(["%s" %s for s in node.values]))
+        self.append('</float_array>\n')
+
     def do_Geometry(self, node, depth):
         self.indent(depth)
         self.append('<geometry')
@@ -198,6 +221,29 @@ class Generator:
 
         self.indent(depth)
         self.append('</geometry>\n')
+
+    def do_IDREFArray(self, node, depth):
+        self.indent(depth)
+        self.append('<IDREF_array count="%s"' % len(node.values))
+        if node.id:
+            self.append(' id="%s"' % node.id)
+        if node.name:
+            self.append(' name="%s"' % node.name)
+        import string
+        self.append('>%s' % " ".join(node.values))
+        self.append('</IDREF_array>\n')
+
+    def do_IntArray(self, node, depth):
+        self.indent(depth)
+        self.append('<int_array count="%s"' % len(node.values))
+        if node.id:
+            self.append(' id="%s"' % node.id)
+        if node.name:
+            self.append(' name="%s"' % node.name)
+        import string
+        self.append('>%s' % " ".join([string.lower("%s" %s) for s in
+            node.values]))
+        self.append('</int_array>\n')
 
     def do_LibraryAnimations(self, node, depth):
         self.indent(depth)
@@ -263,10 +309,56 @@ class Generator:
 
     def do_Mesh(self, node, depth):
         self.indent(depth)
-        self.append('<mesh />\n')
+        self.append('<mesh>\n')
+        for source in node.sources:
+            self.generate(source, depth+1)
+        if node.vertices:
+            self.indent(depth+1)
+            self.append('<vertices />\n')
+        for line in node.lines:
+            self.generate(line, depth+1)
+        for strip in node.linestrips:
+            self.generate(strip, depth+1)
+        for poly in node.polygons:
+            self.generate(poly, depth+1)
+        for ply in node.polylists:
+            self.generate(poly, depth+1)
+        for tri in node.triangles:
+            self.generate(tri, depth+1)
+        for tri in node.trifans:
+            self.generate(tri, depth+1)
+        for tri in node.tristrips:
+            self.generate(tri, depth+1)
 
+        self.indent(depth)
+        self.append('</mesh>\n')
+
+    def do_NameArray(self, node, depth):
+        self.indent(depth)
+        self.append('<Name_array count="%s"' % len(node.values))
+        if node.id:
+            self.append(' id="%s"' % node.id)
+        if node.name:
+            self.append(' name="%s"' % node.name)
+        import string
+        self.append('>%s' % " ".join(node.values))
+        self.append('</Name_array>\n')
 
     def do_Scene(self, node, depth):
         self.indent(depth)
         self.append(node.collada_xml)
+
+    def do_Source(self, node, depth):
+        self.indent(depth)
+        self.append('<source id="%s"' % node.id)
+        if node.name:
+            self.append(' name="%s"' % node.name)
+        self.append(' >\n')
+        if node.asset:
+            self.generate(node.asset, depth+1)
+        if node.content_array:
+            self.generate(node.content_array, depth+1)
+
+        self.indent(depth)
+        self.append('</source>\n')
 
