@@ -105,6 +105,13 @@ class Asset(PlungerNode):
         else:
             return "Invalid attribute '%s'" % attribute
 
+class BoolArray(PlungerNode):
+    def __init__(self):
+        PlungerNode.__init__(self)
+        self.values = []
+        self.id = ""
+        self.name = ""
+
 class Contributor(PlungerNode):
     def __init__(self):
         PlungerNode.__init__(self)
@@ -120,12 +127,37 @@ class ConvexMesh(PlungerNode):
 class Extra(PlungerNode):
     pass
 
+class FloatArray(PlungerNode):
+    def __init__(self):
+        PlungerNode.__init__(self)
+        self.values = []
+        self.id = ""
+        self.name = ""
+
 class Geometry(PlungerNode):
     def __init__(self):
         PlungerNode.__init__(self)
         self.name = ""
         self.id = ""
         self.content = None
+
+class IDREFArray(PlungerNode):
+    def __init__(self):
+        PlungerNode.__init__(self)
+        self.values = []
+        self.id = ""
+        self.name = ""
+
+class IntArray(PlungerNode):
+    def __init__(self):
+        PlungerNode.__init__(self)
+        self.values = []
+        self.id = ""
+        self.name = ""
+        self.minVal = -2147483648
+        self.defaultMin = self.minVal
+        self.maxVal =  2147483647
+        self.defaultMax = self.maxVal
 
 class LibraryAnimations(PlungerNode):
     pass
@@ -187,8 +219,24 @@ class Mesh(PlungerNode):
         self.trifans = []
         self.tristrips = []
 
+class NameArray(PlungerNode):
+    def __init__(self):
+        PlungerNode.__init__(self)
+        self.values = []
+        self.id = ""
+        self.name = ""
+
 class Scene(PlungerNode):
     pass
+
+class Source(PlungerNode):
+    def __init__(self):
+        PlungerNode.__init__(self)
+        self.array_content = None
+        self.id = ""
+        self.name = ""
+        self.technique = None
+        self.technique_common = None
 
 class Spline(PlungerNode):
     pass
