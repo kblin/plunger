@@ -334,6 +334,24 @@ class Generator:
         for prim in node.primitives:
             self.indent(depth+1)
             self.append('<p>%s</p>\n' % " ".join(["%s" % s for s in prim]))
+        self.indent(depth)
+        self.append('</lines>\n')
+
+    def do_Linestrips(self, node, depth):
+        self.indent(depth)
+        self.append('<linestrips count="%s"' % node.count)
+        if node.name:
+            self.append(' name="%s"' % node.name)
+        if node.material:
+            self.append(' material="%s"' % node.material)
+        self.append('>\n')
+
+        for prim in node.primitives:
+            self.indent(depth+1)
+            self.append('<p>%s</p>\n' % " ".join(["%s" % s for s in prim]))
+
+        self.indent(depth)
+        self.append('</linestrips>\n')
 
     def do_Mesh(self, node, depth):
         self.indent(depth)

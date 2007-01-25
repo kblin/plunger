@@ -222,6 +222,14 @@ class Lines(PlungerNode):
         self.name = ""
         self.material = ""
 
+def LineStrips(PlungerNode):
+    def __init__(self):
+        PlungerNode.__init__(self)
+        self.inputs = []
+        self.primitives = []
+        self.name = ""
+        self.material = ""
+
 class Mesh(PlungerNode):
     def __init__(self):
         PlungerNode.__init__(self)
