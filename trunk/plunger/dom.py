@@ -222,7 +222,7 @@ class Lines(PlungerNode):
         self.name = ""
         self.material = ""
 
-def LineStrips(PlungerNode):
+class LineStrips(PlungerNode):
     def __init__(self):
         PlungerNode.__init__(self)
         self.inputs = []
@@ -249,6 +249,30 @@ class NameArray(PlungerNode):
         self.values = []
         self.id = ""
         self.name = ""
+
+class Polygons(PlungerNode):
+    def __init__(self):
+        PlungerNode.__init__(self)
+        self.inputs = []
+        self.primitives = []
+        self.name = ""
+        self.material = ""
+        self.polyholes = []
+
+class PolyHoles(PlungerNode):
+    def __init__(self):
+        PlungerNode.__init__(self)
+        self.holes = []
+        self.primitives = []
+
+class Polylist(PlungerNode):
+    def __init__(self):
+        PlungerNode.__init__(self)
+        self.inputs = []
+        self.primitives = []
+        self.name = ""
+        self.material = ""
+        self.vcount = []
 
 class Scene(PlungerNode):
     pass

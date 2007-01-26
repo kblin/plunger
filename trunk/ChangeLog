@@ -1,3 +1,7 @@
+2007-01-26  Kai Blin  <kai.blin@gmail.com>
+	* collada_plugin/generator.py, collada_plugin/generator.py, dom.py: Handle
+	  the <polygon>, <polylist>, <ph> and <vcount> tags.
+
 2007-01-25  Kai Blin  <kai.blin@gmail.com>
 	* collada_plugin/generator.py, collada_plugin/generator.py, dom.py: Handle
 	  the <linestrips> tag and fix up the <lines> tag generation

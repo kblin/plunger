@@ -199,6 +199,13 @@ class Parser:
         for child in node.childNodes:
             self.parse(child, geometry)
 
+    def do_h(self, node, parent):
+        """Handle the <h> primitives tag
+        """
+        if node.firstChild:
+            parent.holes.append([ int(i) for i in
+                node.firstChild.nodeValue.split()])
+
     def do_IDREF_array(self, node, parent):
         """Handle the <IDEREF_array> tag
         """
@@ -455,8 +462,54 @@ class Parser:
         """Handle the <p> primitives tag
         """
         if node.firstChild:
-            parent.primitves.append([ int(i) for i in
+            parent.primitives.append([ int(i) for i in
                 node.firstChild.nodeValue.split()])
+
+    def do_ph(self, node, parent):
+        """Handle the <ph> tag
+        """
+        polyhole = dom.PolyHoles()
+        polyhole.parent = parent
+        parent.polyholes.append(polyhole)
+
+        for child in node.childNodes:
+            self.parse(child, polyhole)
+
+    def do_polygons(self, node, parent):
+        """Handle the <polygons> tag
+        """
+        poly = dom.Polygons()
+        poly.parent = parent
+        parent.polygons.append(ploy)
+        keys = node.attributes.keys()
+        count = 0
+        if "name" in keys:
+            poly.name = node.attributes['name'].nodeValue
+        if "material" in keys:
+            poly.material = node.attributes['material'].nodeValue
+        if "count" in keys:
+            count = int(node.attributes['count'].nodeValue)
+
+        for child in node.childNodes:
+            self.parse(child, poly)
+
+    def do_polylist(self, node, parent):
+        """Handle the <polylist> tag
+        """
+        poly = dom.Polylist()
+        poly.parent = parent
+        parent.polylists.append(poly)
+        keys = node.attributes.keys()
+        count = 0
+        if "name" in keys:
+            poly.name = node.attributes['name'].nodeValue
+        if "material" in keys:
+            poly.material = node.attributes['material'].nodeValue
+        if "count" in keys:
+            count = int(node.attributes['count'].nodeValue)
+
+        for child in node.childNodes:
+            self.parse(child, poly)
 
     def do_revision(self, node, parent):
         """Handle the <revision> tag
@@ -519,6 +572,12 @@ class Parser:
         """
         if node.firstChild:
             parent.up_axis = node.firstChild.nodeValue
+
+    def do_vcount(self, node, parent):
+        """Handle the <vcount> tag
+        """
+        if node.firstChild:
+            parent.vcount = [int(i) for i in node.firstChild.nodeValue.split()]
 
     def do_vertices(self, node, parent):
         """Handle the <vertices> tag

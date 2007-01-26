@@ -324,7 +324,7 @@ class Generator:
 
     def do_Lines(self, node, depth):
         self.indent(depth)
-        self.append('<lines count="%s"' % node.count)
+        self.append('<lines count="%s"' % len(node.primitives))
         if node.name:
             self.append(' name="%s"' % node.name)
         if node.material:
@@ -339,7 +339,7 @@ class Generator:
 
     def do_Linestrips(self, node, depth):
         self.indent(depth)
-        self.append('<linestrips count="%s"' % node.count)
+        self.append('<linestrips count="%s"' % len(node.primitives))
         if node.name:
             self.append(' name="%s"' % node.name)
         if node.material:
@@ -366,7 +366,7 @@ class Generator:
             self.generate(strip, depth+1)
         for poly in node.polygons:
             self.generate(poly, depth+1)
-        for ply in node.polylists:
+        for poly in node.polylists:
             self.generate(poly, depth+1)
         for tri in node.triangles:
             self.generate(tri, depth+1)
@@ -388,6 +388,45 @@ class Generator:
         import string
         self.append('>%s' % " ".join(node.values))
         self.append('</Name_array>\n')
+
+    def do_Polygons(self, node, depth):
+        self.indent(depth)
+        self.append('<polygons count="%s"' % len(node.primitives))
+        if node.name:
+            self.append(' name="%s"' % node.name)
+        if node.material:
+            self.append(' material="%s"' % node.material)
+        self.append('>\n')
+
+        for prim in node.primitives:
+            self.indent(depth+1)
+            self.append('<p>%s</p>\n' % " ".join(["%s" % s for s in prim]))
+        for hole in node.polyholes:
+            self.generate(hole, depth+1)
+
+        self.indent(depth)
+        self.append('</polygons>\n')
+
+    def do_Polylist(self, node, depth):
+        self.indent(depth)
+        self.append('<polylist count="%s"' % len(node.primitives))
+        if node.name:
+            self.append(' name="%s"' % node.name)
+        if node.material:
+            self.append(' material="%s"' % node.material)
+        self.append('>\n')
+
+        if node.vcount:
+            self.indent(depth+1)
+            self.append('<vcount>%s</vcount>\n' % " ".join([ "%s" % s for s in
+                node.vcount]))
+
+        for prim in node.primitives:
+            self.indent(depth+1)
+            self.append('<p>%s</p>\n' % " ".join(["%s" % s for s in prim]))
+
+        self.indent(depth)
+        self.append('</polygons>\n')
 
     def do_Scene(self, node, depth):
         self.indent(depth)
