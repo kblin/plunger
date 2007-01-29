@@ -76,6 +76,11 @@ class COLLADA(PlungerNode):
         self.visual_scenes = None
         self.scene = None
 
+class Accessor(PlungerNode):
+    def __init__(self):
+        PlungerNode.__init__(self)
+        self.params = []
+
 class Asset(PlungerNode):
     def __init__(self):
         PlungerNode.__init__(self)
@@ -250,6 +255,14 @@ class NameArray(PlungerNode):
         self.id = ""
         self.name = ""
 
+class Param(PlungerNode):
+    def __init__(self):
+        PlungerNode.__init__(self)
+        self.name = ""
+        self.sid = ""
+        self.type = ""
+        self.semantic = ""
+
 class Polygons(PlungerNode):
     def __init__(self):
         PlungerNode.__init__(self)
@@ -288,6 +301,11 @@ class Source(PlungerNode):
 
 class Spline(PlungerNode):
     pass
+
+class TechniqueCommon(PlungerNode):
+    def __init__(self):
+        PlungerNode.__init__(self)
+        self.child_element = None
 
 class Vertices(PlungerNode):
     def __init__(self):

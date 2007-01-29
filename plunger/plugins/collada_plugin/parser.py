@@ -27,6 +27,17 @@ except ImportError:
     import dom
     sys.path.pop()
 
+def addAttr(obj, node, attr, type=None):
+    """Add attribute "attr" to object "obj" if the node "node" has said
+    attribute. If type is set, convert the nodeValue to type.
+    """
+    fun = lambda x : x
+    if type:
+        fun = getattr(__builtins__, type, fun)
+
+    if attr in node.attributes.keys():
+        setattr(obj, attr, fun(node.attributes[attr].nodeValue))
+
 class Parser:
     """Parse Collada XML files
     """
@@ -89,6 +100,21 @@ class Parser:
 
         for child in node.childNodes:
             self.parse(child, collada)
+
+    def do_accessor(self, node, parent):
+        """Handle the <accessor> tag
+        """
+        accessor = dom.Accessor()
+        parent.child_element = accessor
+        accessor.parent = parent
+
+        addAttr(accessor, node, "count", "int")
+        addAttr(accessor, node, "offset", "int")
+        addAttr(accessor, node, "source")
+        addAttr(accessor, node, "stride", "int")
+
+        for child in node.childNodes:
+            self.parse(child, accessor)
 
     def do_asset(self, node, parent):
         """Handle the <asset> tag
@@ -465,6 +491,18 @@ class Parser:
             parent.primitives.append([ int(i) for i in
                 node.firstChild.nodeValue.split()])
 
+    def do_param(self, node, parent):
+        """Handle the <param> tag
+        """
+        param = dom.Param()
+        parent.params.append(param)
+        param.parent = parent
+        keys = node.attributes.keys()
+        addAttr(param, node, "name")
+        addAttr(param, node, "sid")
+        addAttr(param, node, "type")
+        addAttr(param, node, "semantic")
+
     def do_ph(self, node, parent):
         """Handle the <ph> tag
         """
@@ -551,6 +589,21 @@ class Parser:
         """
         if node.firstChild:
             parent.subject = node.firstChild.nodeValue
+
+    def do_technique(self, node, parent):
+        """Handle the <technique> tag
+        """
+        pass
+
+    def do_technique_common(self, node, parent):
+        """Handle the <technique_common> tag
+        """
+        tc = dom.TechniqueCommon()
+        tc.parent = parent
+        parent.technique_common = tc
+
+        for child in node.childNodes:
+            self.parse(child, tc)
 
     def do_title(self, node, parent):
         """Handle the <title> tag

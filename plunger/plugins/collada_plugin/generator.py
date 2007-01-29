@@ -30,6 +30,11 @@ class Generator:
     def append(self, string):
         self.out_string += string
 
+    def appendIfAttr(self, node, attr):
+        obj_attr = getattr(node, attr, None)
+        if obj_attr:
+            self.append(' %s="%s"' % (attr, obj_attr))
+
     def toxml(self):
         return self.out_string
 
@@ -113,6 +118,21 @@ class Generator:
 
         self.indent(depth)
         self.append('</COLLADA>\n')
+
+    def do_Accessor(self, node, depth):
+        self.indent(depth)
+        self.append('<accessor')
+        self.appendIfAttr(node, "count")
+        self.appendIfAttr(node, "offset")
+        self.appendIfAttr(node, "source")
+        self.appendIfAttr(node, "stride")
+        self.append('>\n')
+
+        for param in node.params:
+            self.generate(param, depth+1)
+
+        self.indent(depth)
+        self.append('</accessor>\n')
 
     def do_Asset(self, node, depth):
         self.indent(depth)
@@ -389,6 +409,15 @@ class Generator:
         self.append('>%s' % " ".join(node.values))
         self.append('</Name_array>\n')
 
+    def do_Param(self, node, depth):
+        self.indent(depth)
+        self.append('<param')
+        self.appendIfAttr(node, "name")
+        self.appendIfAttr(node, "sid")
+        self.appendIfAttr(node, "type")
+        self.appendIfAttr(node, "semantic")
+        self.append(' />\n')
+
     def do_Polygons(self, node, depth):
         self.indent(depth)
         self.append('<polygons count="%s"' % len(node.primitives))
@@ -442,9 +471,20 @@ class Generator:
             self.generate(node.asset, depth+1)
         if node.content_array:
             self.generate(node.content_array, depth+1)
+        if node.technique_common:
+            self.generate(node.technique_common, depth+1)
 
         self.indent(depth)
         self.append('</source>\n')
+
+    def do_TechniqueCommon(self, node, depth):
+        self.indent(depth)
+        self.append('<technique_common>\n')
+
+        self.generate(node.child_element, depth+1)
+
+        self.indent(depth)
+        self.append('</technique_common>\n')
 
     def do_Vertices(self, node, depth):
         """Create Collada tags for the vertices
