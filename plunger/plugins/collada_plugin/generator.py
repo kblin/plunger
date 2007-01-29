@@ -175,11 +175,12 @@ class Generator:
 
     def do_BoolArray(self, node, depth):
         self.indent(depth)
-        self.append('<bool_array count="%s"' % len(node.values))
-        if node.id:
-            self.append(' id="%s"' % node.id)
-        if node.name:
-            self.append(' name="%s"' % node.name)
+        self.append('<bool_array')
+        self.appendIfAttr(node, "count")
+        self.appendIfAttr(node, "id")
+        self.appendIfAttr(node, "name")
+        self.append('>')
+
         import string
         self.append('>%s' % " ".join([string.lower("%s" %s) for s in
             node.values]))
@@ -217,11 +218,11 @@ class Generator:
 
     def do_FloatArray(self, node, depth):
         self.indent(depth)
-        self.append('<float_array count="%s"' % len(node.values))
-        if node.id:
-            self.append(' id="%s"' % node.id)
-        if node.name:
-            self.append(' name="%s"' % node.name)
+        self.append('<float_array')
+        self.appendIfAttr(node, "count")
+        self.appendIfAttr(node, "id")
+        self.appendIfAttr(node, "name")
+
         import string
         self.append('>%s' % " ".join(["%s" %s for s in node.values]))
         self.append('</float_array>\n')
@@ -244,11 +245,11 @@ class Generator:
 
     def do_IDREFArray(self, node, depth):
         self.indent(depth)
-        self.append('<IDREF_array count="%s"' % len(node.values))
-        if node.id:
-            self.append(' id="%s"' % node.id)
-        if node.name:
-            self.append(' name="%s"' % node.name)
+        self.append('<IDREF_array')
+        self.appendIfAttr(node, "count")
+        self.appendIfAttr(node, "id")
+        self.appendIfAttr(node, "name")
+
         import string
         self.append('>%s' % " ".join(node.values))
         self.append('</IDREF_array>\n')
@@ -258,23 +259,19 @@ class Generator:
         """
         self.indent(depth)
         self.append('<input')
-        if node.offset:
-            self.append(' offset="%s"' % node.offset)
-        if node.semantic:
-            self.append(' semantic="%s"' % node.semantic)
-        if node.source:
-            self.append(' source="%s"' % node.source)
-        if node.set:
-            self.append(' set="%s"' % node.set)
+        self.appendIfAttr(node, "offset")
+        self.appendIfAttr(node, "semantic")
+        self.appendIfAttr(node, "source")
+        self.appendIfAttr(node, "set")
         self.append(' />\n')
 
     def do_IntArray(self, node, depth):
         self.indent(depth)
-        self.append('<int_array count="%s"' % len(node.values))
-        if node.id:
-            self.append(' id="%s"' % node.id)
-        if node.name:
-            self.append(' name="%s"' % node.name)
+        self.append('<int_array')
+        self.appendIfAttr(node, "count")
+        self.appendIfAttr(node, "id")
+        self.appendIfAttr(node, "name")
+
         import string
         self.append('>%s' % " ".join([string.lower("%s" %s) for s in
             node.values]))
@@ -344,11 +341,10 @@ class Generator:
 
     def do_Lines(self, node, depth):
         self.indent(depth)
-        self.append('<lines count="%s"' % len(node.primitives))
-        if node.name:
-            self.append(' name="%s"' % node.name)
-        if node.material:
-            self.append(' material="%s"' % node.material)
+        self.append('<lines')
+        self.appendIfAttr(node, "count")
+        self.appendIfAttr(node, "name")
+        self.appendIfAttr(node, "materials")
         self.append('>\n')
 
         for prim in node.primitives:
@@ -359,11 +355,10 @@ class Generator:
 
     def do_Linestrips(self, node, depth):
         self.indent(depth)
-        self.append('<linestrips count="%s"' % len(node.primitives))
-        if node.name:
-            self.append(' name="%s"' % node.name)
-        if node.material:
-            self.append(' material="%s"' % node.material)
+        self.append('<linestrips')
+        self.appendIfAttr(node, "count")
+        self.appendIfAttr(node, "name")
+        self.appendIfAttr(node, "materials")
         self.append('>\n')
 
         for prim in node.primitives:
@@ -400,11 +395,11 @@ class Generator:
 
     def do_NameArray(self, node, depth):
         self.indent(depth)
-        self.append('<Name_array count="%s"' % len(node.values))
-        if node.id:
-            self.append(' id="%s"' % node.id)
-        if node.name:
-            self.append(' name="%s"' % node.name)
+        self.append('<Name_array')
+        self.appendIfAttr(node, "count")
+        self.appendIfAttr(node, "id")
+        self.appendIfAttr(node, "name")
+
         import string
         self.append('>%s' % " ".join(node.values))
         self.append('</Name_array>\n')
@@ -420,11 +415,10 @@ class Generator:
 
     def do_Polygons(self, node, depth):
         self.indent(depth)
-        self.append('<polygons count="%s"' % len(node.primitives))
-        if node.name:
-            self.append(' name="%s"' % node.name)
-        if node.material:
-            self.append(' material="%s"' % node.material)
+        self.append('<polygons')
+        self.appendIfAttr(node, "count")
+        self.appendIfAttr(node, "name")
+        self.appendIfAttr(node, "materials")
         self.append('>\n')
 
         for prim in node.primitives:
@@ -438,11 +432,10 @@ class Generator:
 
     def do_Polylist(self, node, depth):
         self.indent(depth)
-        self.append('<polylist count="%s"' % len(node.primitives))
-        if node.name:
-            self.append(' name="%s"' % node.name)
-        if node.material:
-            self.append(' material="%s"' % node.material)
+        self.append('<polylist')
+        self.appendIfAttr(node, "count")
+        self.appendIfAttr(node, "name")
+        self.appendIfAttr(node, "materials")
         self.append('>\n')
 
         if node.vcount:
@@ -463,9 +456,9 @@ class Generator:
 
     def do_Source(self, node, depth):
         self.indent(depth)
-        self.append('<source id="%s"' % node.id)
-        if node.name:
-            self.append(' name="%s"' % node.name)
+        self.append('<source')
+        self.appendIfAttr(node, "id")
+        self.appendIfAttr(node, "name")
         self.append(' >\n')
         if node.asset:
             self.generate(node.asset, depth+1)
@@ -490,9 +483,9 @@ class Generator:
         """Create Collada tags for the vertices
         """
         self.indent(depth)
-        self.append('<vertices id="%s"'% node.id)
-        if node.name:
-            self.append(' name="%s"' %node.name)
+        self.append('<vertices')
+        self.appendIfAttr(node, "id")
+        self.appendIfAttr(node, "name")
         self.append('>\n')
         for input in node.inputs:
             self.generate(input, depth+1)
