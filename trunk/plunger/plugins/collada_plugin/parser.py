@@ -27,16 +27,12 @@ except ImportError:
     import dom
     sys.path.pop()
 
-def addAttr(obj, node, attr, type=None):
+def addAttr(obj, node, attr, convert_fun=lambda x: x):
     """Add attribute "attr" to object "obj" if the node "node" has said
-    attribute. If type is set, convert the nodeValue to type.
+    attribute. If convert is set, convert the nodeValue to type.
     """
-    fun = lambda x : x
-    if type:
-        fun = getattr(__builtins__, type, fun)
-
     if attr in node.attributes.keys():
-        setattr(obj, attr, fun(node.attributes[attr].nodeValue))
+        setattr(obj, attr, convert_fun(node.attributes[attr].nodeValue))
 
 class Parser:
     """Parse Collada XML files
@@ -44,13 +40,16 @@ class Parser:
 
     def __init__(self, model):
         self.model = model
-        self.ignore_text = True
 
     def parse(self, node, parent=None):
         """Dispatch the correct function to parse the node
         """
         parse_function = getattr(self, "parse%s" % node.__class__.__name__)
         parse_function(node, parent)
+
+    def parseChildNodes(self, node, parent):
+        for child in node.childNodes:
+            self.parse(child, parent)
 
     def parseComment(self, node, parent):
         """Ignore comments
@@ -65,23 +64,19 @@ class Parser:
     def parseElement(self, node, parent):
         """Parse a tag
         """
-        print "Parsing %s" % node.tagName
         handler_function = getattr(self, "do_%s" % node.tagName, self.do_nyi)
         handler_function(node, parent)
 
     def parseText(self, node, parent):
         """Parse text
-        Silently ignore text unless ignore is set to false.
+        Silently ignore text.
         """
-        if self.ignore_text:
-            return
-
-        print "Here, we should handle text."
+        pass
 
     def do_nyi(self, node, parent):
         """Handle all elements that do not have a function yet
         """
-        pass
+        print "WARNING: unimplemented tag %s!" % node.tagName
 
     def do_COLLADA(self, node, parent):
         """Handle the COLLADA tag
@@ -89,17 +84,11 @@ class Parser:
         """
         collada = dom.COLLADA()
         self.model.model_tree_root = collada
-        attrs = node.attributes.keys()
-        if "version" in attrs:
-            collada.version = node.attributes['version'].nodeValue
-        if "xmlns" in attrs:
-            pass
-            collada.xmlns = node.attributes['xmlns'].nodeValue
-        if "base" in attrs:
-            collada.base = node.attributes['base'].nodeValue
+        addAttr(collada, node, "version")
+        addAttr(collada, node, "xmlns")
+        addAttr(collada, node, "base")
 
-        for child in node.childNodes:
-            self.parse(child, collada)
+        self.parseChildNodes(node, collada)
 
     def do_accessor(self, node, parent):
         """Handle the <accessor> tag
@@ -108,13 +97,12 @@ class Parser:
         parent.child_element = accessor
         accessor.parent = parent
 
-        addAttr(accessor, node, "count", "int")
-        addAttr(accessor, node, "offset", "int")
+        addAttr(accessor, node, "count", int)
+        addAttr(accessor, node, "offset", int)
         addAttr(accessor, node, "source")
-        addAttr(accessor, node, "stride", "int")
+        addAttr(accessor, node, "stride", int)
 
-        for child in node.childNodes:
-            self.parse(child, accessor)
+        self.parseChildNodes(node, accessor)
 
     def do_asset(self, node, parent):
         """Handle the <asset> tag
@@ -123,8 +111,7 @@ class Parser:
         parent.asset = asset
         asset.parent = parent
 
-        for child in node.childNodes:
-            self.parse(child, asset)
+        self.parseChildNodes(node, asset)
 
     def do_author(self, node, parent):
         """Handle the <author> tag
@@ -144,17 +131,14 @@ class Parser:
         bool = dom.BoolArray()
         parent.content_array = bool
         bool.parent = parent
-        keys = node.attributes.keys()
-        count = 0
-        if "name" in keys:
-            bool.name = node.attributes['name'].nodeValue
-        if "id" in keys:
-            bool.id = node.attributes['id'].nodeValue
-        if "count" in keys:
-            count = int(node.attributes['count'].nodeValue)
+
+        addAttr(bool, node, "count", int)
+        addAttr(bool, node, "name")
+        addAttr(bool, node, "id")
+
         if node.firstChild:
             bool.values = [b == "true" for b in
-                node.firstChild.nodeValue.split()[:count]]
+                node.firstChild.nodeValue.split()[:bool.count]]
 
     def do_comments(self, node, parent):
         """Handle the <comments> tag
@@ -169,8 +153,7 @@ class Parser:
         parent.contributor = contributor
         contributor.parent = parent
 
-        for child in node.childNodes:
-            self.parse(child, contributor)
+        self.parseChildNodes(node, contributor)
 
     def do_copyright(self, node, parent):
         """Handle the <copyright> tag
@@ -197,18 +180,15 @@ class Parser:
         """
         float_array = dom.FloatArray()
         parent.content_array = float_array
-        float_array.parent = parent
-        keys = node.attributes.keys()
-        count = 0
-        if "name" in keys:
-            float_array.name = node.attributes['name'].nodeValue
-        if "id" in keys:
-            float_array.id = node.attributes['id'].nodeValue
-        if "count" in keys:
-            count = int(node.attributes['count'].nodeValue)
+        float_array.parent = parent 
+
+        addAttr(float_array, node, "count", int)
+        addAttr(float_array, node, "name")
+        addAttr(float_array, node, "id")
+
         if node.firstChild:
             float_array.values = [float(f) for f in
-                node.firstChild.nodeValue.split()[:count]]
+                node.firstChild.nodeValue.split()[:float_array.count]]
 
     def do_geometry(self, node, parent):
         """Handle the <geometry> tag
@@ -216,14 +196,11 @@ class Parser:
         geometry = dom.Geometry()
         parent.geometries.append(geometry)
         geometry.parent = parent
-        keys = node.attributes.keys()
-        if "name" in keys:
-            geometry.name = node.attributes['name'].nodeValue
-        if "id" in keys:
-            geometry.id = node.attributes['id'].nodeValue
 
-        for child in node.childNodes:
-            self.parse(child, geometry)
+        addAttr(geometry, node, "name")
+        addAttr(geometry, node, "id")
+
+        self.parseChildNodes(node, geometry)
 
     def do_h(self, node, parent):
         """Handle the <h> primitives tag
@@ -238,16 +215,15 @@ class Parser:
         idref = dom.IDREFArray()
         parent.content_array = idref
         idref.parent = parent
-        keys = node.attributes.keys()
-        count = 0
-        if "name" in keys:
-            idref.name = node.attributes['name'].nodeValue
-        if "id" in keys:
-            idref.id = node.attributes['id'].nodeValue
-        if "count" in keys:
+
+        addAttr(idref, node, "count", int)
+        addAttr(idref, node, "name")
+        addAttr(idref, node, "id")
+
+        if "count" in node.attributes.keys():
             count = int(node.attributes['count'].nodeValue)
         if node.firstChild:
-            idref.values = node.firstChild.nodeValue.split()[:count]
+            idref.values = node.firstChild.nodeValue.split()[:idref.count]
 
     def do_input(self, node, parent):
         """Handle the <input> tag
@@ -255,15 +231,11 @@ class Parser:
         input = dom.Input()
         parent.inputs.append(input)
         input.parent = parent
-        keys = node.attributes.keys()
-        if "offset" in keys:
-            input.offset = node.attributes['offset'].nodeValue
-        if "semantic" in keys:
-            input.semantic = node.attributes['semantic'].nodeValue
-        if "source" in keys:
-            input.source = node.attributes['source'].nodeValue
-        if "set" in keys:
-            input.offset = node.attributes['set'].nodeValue
+
+        addAttr(input, node, "offset")
+        addAttr(input, node, "semantic")
+        addAttr(input, node, "source")
+        addAttr(input, node, "set")
 
     def do_int_array(self, node, parent):
         """Handle the <int_array> tag
@@ -271,21 +243,16 @@ class Parser:
         int_array = dom.IntArray()
         parent.content_array = int_array
         int_array.parent = parent
-        keys = node.attributes.keys()
-        count = 0
-        if "name" in keys:
-            int_array.name = node.attributes['name'].nodeValue
-        if "id" in keys:
-            int_array.id = node.attributes['id'].nodeValue
-        if "minInclusive" in keys:
-            int_array.minVal = node.attributes['minInclusive'].nodeValue
-        if "maxInclusive" in keys:
-            int_array.maxVal = node.attributes['maxInclusive'].nodeValue
-        if "count" in keys:
-            count = int(node.attributes['count'].nodeValue)
+
+        addAttr(int_array, node, "count", int)
+        addAttr(int_array, node, "name")
+        addAttr(int_array, node, "id")
+        addAttr(int_array, node, "minInclusive")
+        addAttr(int_array, node, "maxInclusive")
+
         if node.firstChild:
             int_array.values = [int(f) for f in
-                node.firstChild.nodeValue.split()[:count]]
+                node.firstChild.nodeValue.split()[:int_array.count]]
 
     def do_keywords(self, node, parent):
         """Handle the <keywords> tag
@@ -347,8 +314,8 @@ class Parser:
         geometries = dom.LibraryGeometries()
         parent.geometries = geometries
         geometries.parent = parent
-        for child in node.childNodes:
-            self.parse(child, geometries)
+
+        self.parseChildNodes(node, geometries)
 
     def do_library_images(self, node, parent):
         """handle the <library_images> tag
@@ -420,17 +387,12 @@ class Parser:
         lines = dom.Lines()
         lines.parent = parent
         parent.lines.append(lines)
-        keys = node.attributes.keys()
-        count = 0
-        if "name" in keys:
-            lines.name = node.attributes['name'].nodeValue
-        if "material" in keys:
-            lines.material = node.attributes['material'].nodeValue
-        if "count" in keys:
-            count = int(node.attributes['count'].nodeValue)
 
-        for child in node.childNodes:
-            self.parse(child, lines)
+        addAttr(lines, node, "name")
+        addAttr(lines, node, "material")
+        addAttr(lines, node, "count", int)
+
+        self.parseChildNodes(node, lines)
 
     def do_linestrips(self, node, parent):
         """Handle the <linestrips> tag
@@ -438,17 +400,12 @@ class Parser:
         linestripss = dom.Linestrips()
         linestrips.parent = parent
         parent.linestrips.append(linestrips)
-        keys = node.attributes.keys()
-        count = 0
-        if "name" in keys:
-            linestrips.name = node.attributes['name'].nodeValue
-        if "material" in keys:
-            linestrips.material = node.attributes['material'].nodeValue
-        if "count" in keys:
-            count = int(node.attributes['count'].nodeValue)
 
-        for child in node.childNodes:
-            self.parse(child, linestrips)
+        addAttr(linestrips, node, "name")
+        addAttr(linestrips, node, "material")
+        addAttr(linestrips, node, "count", int)
+
+        self.parseChildNodes(node, linestrips)
 
 
     def do_mesh(self, node, parent):
@@ -458,8 +415,7 @@ class Parser:
         mesh.parent = parent
         parent.content = mesh
 
-        for child in node.childNodes:
-            self.parse(child, mesh)
+        self.parseChildNodes(node, mesh)
 
     def do_modified(self, node, parent):
         """Handle the <modified> tag
@@ -473,16 +429,13 @@ class Parser:
         name_array = dom.NameArray()
         parent.content_array = name_array
         name_array.parent = parent
-        keys = node.attributes.keys()
-        count = 0
-        if "name" in keys:
-            name_array.name = node.attributes['name'].nodeValue
-        if "id" in keys:
-            name_array.id = node.attributes['id'].nodeValue
-        if "count" in keys:
-            count = int(node.attributes['count'].nodeValue)
+
+        addAttr(name_array, node, "count", int)
+        addAttr(name_array, node, "name")
+        addAttr(name_array, node, "id")
+
         if node.firstChild:
-            name_array.values = node.firstChild.nodeValue.split()[:count]
+            name_array.values = node.firstChild.nodeValue.split()[:name_array.count]
 
     def do_p(self, node, parent):
         """Handle the <p> primitives tag
@@ -497,7 +450,7 @@ class Parser:
         param = dom.Param()
         parent.params.append(param)
         param.parent = parent
-        keys = node.attributes.keys()
+
         addAttr(param, node, "name")
         addAttr(param, node, "sid")
         addAttr(param, node, "type")
@@ -510,8 +463,7 @@ class Parser:
         polyhole.parent = parent
         parent.polyholes.append(polyhole)
 
-        for child in node.childNodes:
-            self.parse(child, polyhole)
+        self.parseChildNodes(node, polyhole)
 
     def do_polygons(self, node, parent):
         """Handle the <polygons> tag
@@ -519,17 +471,12 @@ class Parser:
         poly = dom.Polygons()
         poly.parent = parent
         parent.polygons.append(ploy)
-        keys = node.attributes.keys()
-        count = 0
-        if "name" in keys:
-            poly.name = node.attributes['name'].nodeValue
-        if "material" in keys:
-            poly.material = node.attributes['material'].nodeValue
-        if "count" in keys:
-            count = int(node.attributes['count'].nodeValue)
 
-        for child in node.childNodes:
-            self.parse(child, poly)
+        addAttr(poly, node, "name")
+        addAttr(poly, node, "material")
+        addAttr(poly, node, "count", int)
+
+        self.parseChildNodes(node, poly)
 
     def do_polylist(self, node, parent):
         """Handle the <polylist> tag
@@ -537,17 +484,12 @@ class Parser:
         poly = dom.Polylist()
         poly.parent = parent
         parent.polylists.append(poly)
-        keys = node.attributes.keys()
-        count = 0
-        if "name" in keys:
-            poly.name = node.attributes['name'].nodeValue
-        if "material" in keys:
-            poly.material = node.attributes['material'].nodeValue
-        if "count" in keys:
-            count = int(node.attributes['count'].nodeValue)
 
-        for child in node.childNodes:
-            self.parse(child, poly)
+        addAttr(poly, node, "name")
+        addAttr(poly, node, "material")
+        addAttr(poly, node, "count", int)
+
+        self.parseChildNodes(node, poly)
 
     def do_revision(self, node, parent):
         """Handle the <revision> tag
@@ -569,14 +511,11 @@ class Parser:
         source = dom.Source()
         source.parent = parent
         parent.sources.append(source)
-        keys = node.attributes.keys()
-        if "id" in keys:
-            source.id = node.attributes['id'].nodeValue
-        if "name" in keys:
-            source.name = node.attributes['name'].nodeValue
 
-        for child in node.childNodes:
-            self.parse(child, source)
+        addAttr(source, node, "name")
+        addAttr(source, node, "id")
+
+        self.parseChildNodes(node, source)
 
     def do_source_data(self, node, parent):
         """Handle the <source_data> tag
@@ -602,8 +541,7 @@ class Parser:
         tc.parent = parent
         parent.technique_common = tc
 
-        for child in node.childNodes:
-            self.parse(child, tc)
+        self.parseChildNodes(node, tc)
 
     def do_title(self, node, parent):
         """Handle the <title> tag
@@ -618,7 +556,7 @@ class Parser:
         if "name" in keys:
             parent.unit['name'] = node.attributes['name'].nodeValue
         if "meter" in keys:
-            parent.unit['meter'] = node.attributes['meter'].nodeValue
+            parent.unit['meter'] = float(node.attributes['meter'].nodeValue)
 
     def do_up_axis(self, node, parent):
         """Handle the <up_axis> tag
@@ -637,14 +575,10 @@ class Parser:
         """
         vertices = dom.Vertices()
         parent.vertices.append(vertices)
-        vertices.parent = parent
-        keys = node.attributes.keys()
-        if "id" in keys:
-            vertices.id = node.attributes['id'].nodeValue
-        if "name" in keys:
-            vertices.name = node.attributes['name'].nodeValue
 
-        for child in node.childNodes:
-            self.parse(child, vertices)
+        addAttr(vertices, node, "name")
+        addAttr(vertices, node, "id")
+
+        self.parseChildNodes(node, vertices)
 
 

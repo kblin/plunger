@@ -1,4 +1,8 @@
 2007-01-29  Kai Blin  <kai.blin@gmail.com>
+	* collada_plugin/generator.py, collada_plugin/generator.py, dom.py: Clean up
+	  some code to make parser/generator more readable and avoid duplication
+
+2007-01-29  Kai Blin  <kai.blin@gmail.com>
 	* collada_plugin/generator.py, collada_plugin/generator.py, dom.py: Handle
 	  the <technique_common>, <accessor> and <param> tags.
 

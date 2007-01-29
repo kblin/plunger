@@ -114,6 +114,7 @@ class BoolArray(PlungerNode):
     def __init__(self):
         PlungerNode.__init__(self)
         self.values = []
+        self.count = 0
         self.id = ""
         self.name = ""
 
@@ -135,6 +136,7 @@ class Extra(PlungerNode):
 class FloatArray(PlungerNode):
     def __init__(self):
         PlungerNode.__init__(self)
+        self.count = 0
         self.values = []
         self.id = ""
         self.name = ""
@@ -149,6 +151,7 @@ class Geometry(PlungerNode):
 class IDREFArray(PlungerNode):
     def __init__(self):
         PlungerNode.__init__(self)
+        self.count = 0
         self.values = []
         self.id = ""
         self.name = ""
@@ -165,12 +168,13 @@ class IntArray(PlungerNode):
     def __init__(self):
         PlungerNode.__init__(self)
         self.values = []
+        self.count = 0
         self.id = ""
         self.name = ""
-        self.minVal = -2147483648
-        self.defaultMin = self.minVal
-        self.maxVal =  2147483647
-        self.defaultMax = self.maxVal
+        self.defaultMin = -2147483648
+        self.defaultMax =  2147483647
+        self.minInclusive = self.defaultMin
+        self.maxInclusive = self.defaultMax
 
 class LibraryAnimations(PlungerNode):
     pass
@@ -252,6 +256,7 @@ class NameArray(PlungerNode):
     def __init__(self):
         PlungerNode.__init__(self)
         self.values = []
+        self.count = 0
         self.id = ""
         self.name = ""
 
