@@ -5,6 +5,10 @@ Version 0.0.1:
 --------------
 * Get the text interface set up
 * Load Collada.dae files.
+* Rewrite if "foo" in keys: obj.foo = node.attoibutes["foo"].nodeValue
+  to use addAttr
+* Rewrite if node.foo: self.append(' foo="%s"' % node.foo) to use
+  self.appendIfAttr()
 
 Version 0.0.2:
 --------------
