@@ -167,13 +167,25 @@ class Parser:
         if node.firstChild:
             parent.created = node.firstChild.nodeValue
 
-    def do_extras(self, node, parent):
-        """handle the <extras> tag
+    def do_convex_mesh(self, node, parent):
+        """Handle the <convex_mesh> tag
+        """
+        cm = dom.ConvexMesh()
+        cm.parent = parent
+        parent.content = cm
+
+        addAttr(cm, node, "convex_hull_of")
+
+        self.parseChildNodes(node, cm)
+
+    def do_extra(self, node, parent):
+        """handle the <extra> tag
         """
         #cheat and just store the xml code for now
-        exras = dom.Extras()
-        scenes.collada_xml = node.toxml()
-        parent.scenes = scenes
+        extra = dom.Extra()
+        parent.extra = extra
+        for child in node.childNodes:
+            extra.collada_xml += child.toxml()
 
     def do_float_array(self, node, parent):
         """Handle the <float_array> tag
@@ -548,6 +560,45 @@ class Parser:
         """
         if node.firstChild:
             parent.title = node.firstChild.nodeValue
+
+    def do_triangles(self, node, parent):
+        """Handle the <triangles> tag
+        """
+        tri = dom.Triangles()
+        tri.parent = parent
+        parent.triangles.append(tri)
+
+        addAttr(tri, node, "name")
+        addAttr(tri, node, "count", int)
+        addAttr(tri, node, "material")
+
+        self.parseChildNodes(node, tri)
+
+    def do_trifans(self, node, parent):
+        """Handle the <trifans> tag
+        """
+        tri = dom.TriFans()
+        tri.parent = parent
+        parent.triangles.append(tri)
+
+        addAttr(tri, node, "name")
+        addAttr(tri, node, "count", int)
+        addAttr(tri, node, "material")
+
+        self.parseChildNodes(node, tri)
+
+    def do_tristrips(self, node, parent):
+        """Handle the <tristrips> tag
+        """
+        tri = dom.TriStrips()
+        tri.parent = parent
+        parent.triangles.append(tri)
+
+        addAttr(tri, node, "name")
+        addAttr(tri, node, "count", int)
+        addAttr(tri, node, "material")
+
+        self.parseChildNodes(node, tri)
 
     def do_unit(self, node, parent):
         """Handle the <unit> tag

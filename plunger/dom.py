@@ -27,6 +27,7 @@ class PlungerNode:
         self.attributes = {}
         self.asset = None
         self.collada_xml = ""
+        self.extra = None
 
     def getType(self):
         return self.__class__.__name__
@@ -80,6 +81,10 @@ class Accessor(PlungerNode):
     def __init__(self):
         PlungerNode.__init__(self)
         self.params = []
+        self.count = 0
+        self.offset = 0
+        self.source = ""
+        self.stride = 1
 
 class Asset(PlungerNode):
     def __init__(self):
@@ -128,7 +133,18 @@ class Contributor(PlungerNode):
         self.source_date = ""
 
 class ConvexMesh(PlungerNode):
-    pass
+    def __init__(self):
+        PlungerNode.__init__(self)
+        self.convex_hull_of = ""
+        self.sources = []
+        self.vertices = []
+        self.lines = []
+        self.linestrips = []
+        self.polygons = []
+        self.polylists = []
+        self.triangles = []
+        self.trifans = []
+        self.tristrips = []
 
 class Extra(PlungerNode):
     pass
@@ -140,6 +156,14 @@ class FloatArray(PlungerNode):
         self.values = []
         self.id = ""
         self.name = ""
+    def getStride(self):
+        if self.parent.technique_common:
+            if self.parent.technique_common.child_element:
+                return self.parent.technique_common.child_element.stride
+            else:
+                return 1
+        else:
+            return 1
 
 class Geometry(PlungerNode):
     def __init__(self):
@@ -311,6 +335,33 @@ class TechniqueCommon(PlungerNode):
     def __init__(self):
         PlungerNode.__init__(self)
         self.child_element = None
+
+class Triangles(PlungerNode):
+    def __init__(self):
+        PlungerNode.__init__(self)
+        self.inputs = []
+        self.primitives = []
+        self.count = 0
+        self.name = ""
+        self.material = ""
+
+class TriFans(PlungerNode):
+    def __init__(self):
+        PlungerNode.__init__(self)
+        self.inputs = []
+        self.primitives = []
+        self.count = 0
+        self.name = ""
+        self.material = ""
+
+class TriStrips(PlungerNode):
+    def __init__(self):
+        PlungerNode.__init__(self)
+        self.inputs = []
+        self.primitives = []
+        self.count = 0
+        self.name = ""
+        self.material = ""
 
 class Vertices(PlungerNode):
     def __init__(self):
