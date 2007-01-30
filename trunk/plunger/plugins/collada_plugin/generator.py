@@ -210,11 +210,39 @@ class Generator:
 
     def do_ConvexMesh(self, node, depth):
         self.indent(depth)
-        self.append('<convex_mesh />\n')
+        self.append('<convex_mesh')
+        self.appendIfAttr(node, "convex_hull_of")
+        self.append(' />\n')
 
-    def do_Extras(self, node, depth):
+        for source in node.sources:
+            self.generate(source, depth+1)
+        for vertex in node.vertices:
+            self.generate(vertex, depth+1)
+        for line in node.lines:
+            self.generate(line, depth+1)
+        for strip in node.linestrips:
+            self.generate(strip, depth+1)
+        for poly in node.polygons:
+            self.generate(poly, depth+1)
+        for poly in node.polylists:
+            self.generate(poly, depth+1)
+        for tri in node.triangles:
+            self.generate(tri, depth+1)
+        for tri in node.trifans:
+            self.generate(tri, depth+1)
+        for tri in node.tristrips:
+            self.generate(tri, depth+1)
+
         self.indent(depth)
-        self.append(node.collada_xml)
+        self.append('</convex_mesh>\n')
+
+    def do_Extra(self, node, depth):
+        self.indent(depth)
+        self.append('<extra>\n')
+        self.append(node.collada_xml.rstrip())
+        self.append('\n')
+        self.indent(depth)
+        self.append('</extra>\n')
 
     def do_FloatArray(self, node, depth):
         self.indent(depth)
@@ -222,23 +250,33 @@ class Generator:
         self.appendIfAttr(node, "count")
         self.appendIfAttr(node, "id")
         self.appendIfAttr(node, "name")
+        self.append('>')
 
-        import string
-        self.append('>%s' % " ".join(["%s" %s for s in node.values]))
+        stride = node.getStride()
+        for i in range(node.count):
+            if(i % stride == 0):
+                self.append('\n')
+                self.indent(depth+1)
+                self.append('%s' % node.values[i])
+            else:
+                self.append(' %s' % node.values[i])
+
+        self.append('\n')
+        self.indent(depth)
         self.append('</float_array>\n')
 
     def do_Geometry(self, node, depth):
         self.indent(depth)
         self.append('<geometry')
-        if node.name:
-            self.append(' name="%s"' % node.name)
-        if node.id:
-            self.append(' id="%s"' % node.id)
-
+        self.appendIfAttr(node, "name")
+        self.appendIfAttr(node, "id")
         self.append('>\n')
 
         if node.content:
             self.generate(node.content, depth+1)
+
+        if node.extra:
+            self.generate(node.extra, depth+1)
 
         self.indent(depth)
         self.append('</geometry>\n')
@@ -306,6 +344,8 @@ class Generator:
         self.append('<libarary_geometries>\n')
         for geometry in node.geometries:
             self.generate(geometry, depth+1)
+        self.indent(depth)
+        self.append('</library_geometries>\n')
 
     def do_LibraryImages(self, node, depth):
         self.indent(depth)
@@ -478,6 +518,66 @@ class Generator:
 
         self.indent(depth)
         self.append('</technique_common>\n')
+
+    def do_Triangles(self, node, depth):
+        self.indent(depth)
+        self.append('<triangles')
+        self.appendIfAttr(node, "count")
+        self.appendIfAttr(node, "name")
+        self.appendIfAttr(node, "materials")
+        self.append('>\n')
+
+        for prim in node.primitives:
+            self.indent(depth+1)
+            self.append('<p>\n')
+            for i in range(0, len(prim), 3):
+                self.indent(depth+2)
+                self.append("%s %s %s\n" % (prim[i], prim[i+1], prim[i+2]))
+            self.indent(depth+1)
+            self.append('</p>\n')
+
+        self.indent(depth)
+        self.append('</triangles>\n')
+
+    def do_TriFans(self, node, depth):
+        self.indent(depth)
+        self.append('<trifans')
+        self.appendIfAttr(node, "count")
+        self.appendIfAttr(node, "name")
+        self.appendIfAttr(node, "materials")
+        self.append('>\n')
+
+        for prim in node.primitives:
+            self.indent(depth+1)
+            self.append('<p>\n')
+            for i in range(0, len(prim), 3):
+                self.indent(depth+2)
+                self.append("%s %s %s\n" % (prim[i], prim[i+1], prim[i+2]))
+            self.indent(depth+1)
+            self.append('</p>\n')
+
+        self.indent(depth)
+        self.append('</trifans>\n')
+
+    def do_TriStrips(self, node, depth):
+        self.indent(depth)
+        self.append('<tristrips')
+        self.appendIfAttr(node, "count")
+        self.appendIfAttr(node, "name")
+        self.appendIfAttr(node, "materials")
+        self.append('>\n')
+
+        for prim in node.primitives:
+            self.indent(depth+1)
+            self.append('<p>\n')
+            for i in range(0, len(prim), 3):
+                self.indent(depth+2)
+                self.append("%s %s %s\n" % (prim[i], prim[i+1], prim[i+2]))
+            self.indent(depth+1)
+            self.append('</p>\n')
+
+        self.indent(depth)
+        self.append('</tristrips>\n')
 
     def do_Vertices(self, node, depth):
         """Create Collada tags for the vertices

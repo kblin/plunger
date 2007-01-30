@@ -1,3 +1,8 @@
+2007-01-30  Kai Blin  <kai.blin@gmail.com>
+	* collada_plugin/generator.py, collada_plugin/generator.py, dom.py: Handle
+	  the <convex_mesh>, <tri(angles|fans|strips)> and <extra> tags,
+	  pretty-print <float_arrays> and <triangles>
+
 2007-01-29  Kai Blin  <kai.blin@gmail.com>
 	* collada_plugin/generator.py, collada_plugin/generator.py, dom.py: Clean up
 	  some code to make parser/generator more readable and avoid duplication
