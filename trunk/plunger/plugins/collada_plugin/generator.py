@@ -527,6 +527,9 @@ class Generator:
         self.appendIfAttr(node, "materials")
         self.append('>\n')
 
+        for input in node.inputs:
+            self.generate(input, depth+1)
+
         for prim in node.primitives:
             self.indent(depth+1)
             self.append('<p>\n')

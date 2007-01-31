@@ -135,6 +135,7 @@ class Parser:
         addAttr(bool, node, "count", int)
         addAttr(bool, node, "name")
         addAttr(bool, node, "id")
+        self.model.registerId(bool.id, bool)
 
         if node.firstChild:
             bool.values = [b == "true" for b in
@@ -197,6 +198,7 @@ class Parser:
         addAttr(float_array, node, "count", int)
         addAttr(float_array, node, "name")
         addAttr(float_array, node, "id")
+        self.model.registerId(float_array.id, float_array)
 
         if node.firstChild:
             float_array.values = [float(f) for f in
@@ -211,6 +213,7 @@ class Parser:
 
         addAttr(geometry, node, "name")
         addAttr(geometry, node, "id")
+        self.model.registerId(geometry.id, geometry)
 
         self.parseChildNodes(node, geometry)
 
@@ -231,6 +234,7 @@ class Parser:
         addAttr(idref, node, "count", int)
         addAttr(idref, node, "name")
         addAttr(idref, node, "id")
+        self.model.registerId(idref.id, idref)
 
         if "count" in node.attributes.keys():
             count = int(node.attributes['count'].nodeValue)
@@ -261,6 +265,7 @@ class Parser:
         addAttr(int_array, node, "id")
         addAttr(int_array, node, "minInclusive")
         addAttr(int_array, node, "maxInclusive")
+        self.model.registerId(int_array.id, int_array)
 
         if node.firstChild:
             int_array.values = [int(f) for f in
@@ -445,6 +450,7 @@ class Parser:
         addAttr(name_array, node, "count", int)
         addAttr(name_array, node, "name")
         addAttr(name_array, node, "id")
+        self.model.registerId(name_array.id, name_array)
 
         if node.firstChild:
             name_array.values = node.firstChild.nodeValue.split()[:name_array.count]
@@ -526,6 +532,7 @@ class Parser:
 
         addAttr(source, node, "name")
         addAttr(source, node, "id")
+        self.model.registerId(source.id, source)
 
         self.parseChildNodes(node, source)
 
@@ -629,6 +636,7 @@ class Parser:
 
         addAttr(vertices, node, "name")
         addAttr(vertices, node, "id")
+        self.model.registerId(vertices.id, vertices)
 
         self.parseChildNodes(node, vertices)
 
