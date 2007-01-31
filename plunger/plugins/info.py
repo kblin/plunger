@@ -37,22 +37,46 @@ does_import = False
 does_export = True
 version = "0.0.1"
 
+def printDelimiter(out):
+    begin_delim = "x"
+    middle_delim = "-" * 40
+    end_delim = "x"
+    out.write("%s%s%s\n" % (begin_delim, middle_delim, end_delim))
+
 def importAsset(model, asset):
     raise NotImplementedError
 
 def exportAsset(model, asset):
     out = toolbox.writeAny(asset)
+    printDelimiter(out)
     out.write("Plunger Info plugin version %s\n" % version)
-    out.write("Printing information about the asset.\n")
+    exportModelInformation(model, out)
     exportAssetInformation(model, out)
+    exportMeshInfo(model, out)
     out.close()
 
+def exportModelInformation(model, out):
+    printDelimiter(out)
+    out.write("Registered IDs: %s\n" % " ".join(model.idmap.keys()))
+
 def exportAssetInformation(model, out):
+    printDelimiter(out)
+    out.write("Printing information about the asset.\n")
     out.write("Author: %s\n" % model.getRoot().getAssetInfo("author"))
     out.write("Title: %s\n" % model.getRoot().getAssetInfo("title"))
     out.write("Keywords: %s\n" % model.getRoot().getAssetInfo("keywords"))
-    out.write("Asset copyright information: %s\n" %
-    model.getRoot().getAssetInfo("copyright"))
+    out.write("Asset copyright information: %s\n" % model.getRoot().getAssetInfo("copyright"))
+
+def exportMeshInfo(model, out):
+    printDelimiter(out)
+    out.write("Mesh Information:\n")
+    out.write("Number of meshes in this model: %s\n" % model.getNumMeshes())
+
+    i = 0
+    for mesh in model.getMeshes():
+        out.write("Handling mesh %s.\n" % i)
+        out.write("Number of vertices: %s\n" % mesh.getNumVertices())
+        i += 1
 
 
 

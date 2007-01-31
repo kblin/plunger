@@ -37,15 +37,37 @@ class PlungerNode:
             return self.asset.getAttribute(attribute)
         else: return ""
 
+    def getModel(self):
+        return self.model
+
 class Model:
     def __init__(self):
         self.model_tree_root = None
+        self.idmap = {}
 
     def getType(self):
         return self.__class__.__name__
 
     def getRoot(self):
         return self.model_tree_root
+
+    def getNumMeshes(self):
+        if self.model_tree_root and self.model_tree_root.geometries:
+            lg = self.model_tree_root.geometries
+            return lg.getNumMeshes()
+        return 0
+
+    def getMeshes(self):
+        if self.model_tree_root and self.model_tree_root.geometries:
+            lg = self.model_tree_root.geometries
+            return lg.getMeshes()
+        return []
+
+    def registerId(self, id, node):
+        self.idmap[id] = node
+
+    def getNodeById(self, id):
+        return self.idmap[id]
 
 def getModel():
     global model
@@ -223,6 +245,16 @@ class LibraryGeometries(PlungerNode):
         PlungerNode.__init__(self)
         self.geometries = []
 
+    def getNumMeshes(self):
+        return len(self.getMeshes())
+
+    def getMeshes(self):
+        meshes = []
+        for geo in self.geometries:
+            if geo.content and geo.content.getType() == "Mesh":
+                meshes.append(geo.content)
+        return meshes
+
 class LibraryImages(PlungerNode):
     pass
 
@@ -275,6 +307,13 @@ class Mesh(PlungerNode):
         self.triangles = []
         self.trifans = []
         self.tristrips = []
+
+    def getNumVertices(self):
+        vcount = 0
+        for vertex in self.vertices:
+            pass #FIXME: fix this.
+        return vcount
+
 
 class NameArray(PlungerNode):
     def __init__(self):
