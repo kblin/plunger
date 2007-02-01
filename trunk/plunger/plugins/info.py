@@ -76,6 +76,20 @@ def exportMeshInfo(model, out):
     for mesh in model.getMeshes():
         out.write("Handling mesh %s.\n" % i)
         out.write("Number of vertices: %s\n" % mesh.getNumVertices())
+        for vertex in mesh.getVertices():
+            out.write("point(%s, %s, %s)\n" % tuple(vertex))
+        out.write("Number of normals: %s\n" % mesh.getNumNormals())
+        for normal in mesh.getNormals():
+            out.write("vec(%s, %s, %s)\n" % tuple(normal))
+        out.write("Number of texture transforms: %s\n" % mesh.getNumTexCoords())
+        for coord in mesh.getTexCoords():
+            out.write("vec(%s, %s)\n" % tuple(coord))
+        out.write("Number of faces: %s\n" % mesh.getNumFaces())
+        for face in mesh.getFaces():
+            out.write("face[%s" % face[0])
+            for j in range(1,len(face)):
+                out.write(",%s" % face[j])
+            out.write("]\n")
         i += 1
 
 
