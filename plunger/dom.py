@@ -311,9 +311,50 @@ class Mesh(PlungerNode):
     def getNumVertices(self):
         vcount = 0
         for vertex in self.vertices:
-            pass #FIXME: fix this.
+            vcount += vertex.getNumVertices()
         return vcount
 
+    def getVertices(self):
+        vertices = []
+        for vertex in self.vertices:
+            vertices.extend(vertex.getVertices())
+        return vertices
+
+    def getNumNormals(self):
+        ncount = 0
+        for tri in self.triangles:
+            ncount += tri.getNumNormals()
+        return ncount
+
+    def getNormals(self):
+        normals = []
+        for tri in self.triangles:
+            normals.extend(tri.getNormals())
+        return normals
+
+    def getNumTexCoords(self):
+        tcount = 0
+        for tri in self.triangles:
+            tcount += tri.getNumTexCoords()
+        return tcount
+
+    def getTexCoords(self):
+        coords = []
+        for tri in self.triangles:
+            coords.extend(tri.getTexCoords())
+        return coords
+
+    def getNumFaces(self):
+        fcount = 0
+        for tri in self.triangles:
+            fcount = tri.getNumFaces()
+        return fcount
+
+    def getFaces(self):
+        faces = []
+        for tri in self.triangles:
+            faces.extend(tri.getFaces())
+        return faces
 
 class NameArray(PlungerNode):
     def __init__(self):
@@ -361,7 +402,7 @@ class Scene(PlungerNode):
 class Source(PlungerNode):
     def __init__(self):
         PlungerNode.__init__(self)
-        self.array_content = None
+        self.content_array = None
         self.id = ""
         self.name = ""
         self.technique = None
@@ -383,6 +424,80 @@ class Triangles(PlungerNode):
         self.count = 0
         self.name = ""
         self.material = ""
+
+    def getFaces(self):
+        faces = []
+        for prim in self.primitives:
+            stride = len(prim) / (3 * self.count)
+            for i in range(0, len(prim), 3 * stride):
+                face = []
+                face.append(prim[i])
+                face.append(prim[i+stride])
+                face.append(prim[i+2*stride])
+                faces.append(face)
+        return faces
+
+
+    def getNumFaces(self):
+        return self.count
+
+    def getNormals(self):
+        source_id = ""
+        for input in self.inputs:
+            if input.semantic == "NORMAL":
+                source_id = input.source.replace('#', '', 1)
+                break
+
+        source = getModel().getNodeById(source_id)
+
+        if not source or not source.content_array:
+            return []
+
+        normals = []
+        stride = source.content_array.getStride()
+        vec = []
+        for i in range(0, len(source.content_array.values)):
+            if i % stride == 0:
+                normals.append(vec)
+                vec = []
+            vec.append(source.content_array.values[i])
+        normals.append(vec)
+        #we added an empty [] on the first run of the loop, fix this now
+        return normals[1:]
+
+    def getNumNormals(self):
+        return len(self.getNormals())
+
+    def getTexCoords(self):
+        source_id = ""
+        for input in self.inputs:
+            if input.semantic == "TEXCOORD":
+                source_id = input.source.replace('#', '', 1)
+                break
+
+        if not source_id:
+            return []
+
+        source = getModel().getNodeById(source_id)
+
+        if not source or not source.content_array:
+            return []
+
+        coord = []
+        stride = source.content_array.getStride()
+        vec = []
+        for i in range(0, len(source.content_array.values)):
+            if i % stride == 0:
+                coord.append(vec)
+                vec = []
+            vec.append(source.content_array.values[i])
+        coord.append(vec)
+        #we added an empty [] on the first run of the loop, fix this now
+        return coord[1:]
+        return []
+
+    def getNumTexCoords(self):
+        return len(self.getTexCoords())
 
 class TriFans(PlungerNode):
     def __init__(self):
@@ -408,3 +523,32 @@ class Vertices(PlungerNode):
         self.inputs = []
         self.id = ""
         self.name = ""
+
+    def getVertices(self):
+        source_id = ""
+        for input in self.inputs:
+            if input.semantic == "POSITION":
+                source_id = input.source.replace('#', '', 1)
+                break
+
+        source = getModel().getNodeById(source_id)
+
+        if not source or not source.content_array:
+            return []
+
+        vertices = []
+
+        stride = source.content_array.getStride()
+        point = []
+        for i in range(0, len(source.content_array.values)):
+            if i % stride == 0:
+                vertices.append(point)
+                point = []
+            point.append(source.content_array.values[i])
+        vertices.append(point)
+
+        #slice off the empty [] we added on the first loop iteration
+        return vertices[1:]
+
+    def getNumVertices(self):
+        return len(self.getVertices())

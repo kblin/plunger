@@ -50,8 +50,8 @@ class SearObjectHeader:
 
 class SearObjectMesh:
     def __init__(self):
-        self.mesh_transform = []
-        self.texture_transform = []
+        self.mesh_transform = [[1,0,0,0], [0,1,0,0], [0,0,1,0], [0,0,0,1]]
+        self.texture_transform = [[1,0,0,0], [0,1,0,0], [0,0,1,0], [0,0,0,1]]
         self.texture_map = ""
         self.num_vertices = 0
         self.num_faces = 0
@@ -85,11 +85,11 @@ class SearObjectMesh:
                 self.emissive[2], self.emissive[3])
         pack_str += struct.pack("f", self.shininess)
         for vertex in self.vertices:
-            pack_str += struct.pack("f", vertex)
+            pack_str += struct.pack("fff", vertex[0], vertex[1], vertex[2])
         for normal in self.normals:
-            pack_str += struct.pack("f", normal)
+            pack_str += struct.pack("fff", normal[0], normal[1], normal[2])
         for coord in self.texture_coords:
-            pack_str += struct.pack("f", coord)
+            pack_str += struct.pack("ff", coord[0], coord[1])
         for index in self.indices:
             pack_str += struct.pack("I", index)
 
@@ -118,4 +118,6 @@ def exportAsset(model, asset):
     meshes = model.getMeshes()
     for mesh in meshes:
         sear_mesh = SearObjectMesh()
+        sear_mesh.num_vertices = mesh.getNumVertices()
+        sear_mesh.vertices = mesh.getVertices()
     out.close()

@@ -532,11 +532,7 @@ class Generator:
 
         for prim in node.primitives:
             self.indent(depth+1)
-            self.append('<p>\n')
-            for i in range(0, len(prim), 3):
-                self.indent(depth+2)
-                self.append("%s %s %s\n" % (prim[i], prim[i+1], prim[i+2]))
-            self.indent(depth+1)
+            self.append('<p>%s' % " ".join([str(p) for p in prim]))
             self.append('</p>\n')
 
         self.indent(depth)
