@@ -55,11 +55,11 @@ class SearObjectMesh:
         self.texture_map = ""
         self.num_vertices = 0
         self.num_faces = 0
-        self.ambient = []
-        self.diffuse = []
-        self.specular = []
-        self.emissive = []
-        self.shininess
+        self.ambient = [0,0,0,1]
+        self.diffuse = [0,0,0,1]
+        self.specular = [0,0,0,1]
+        self.emissive = [0,0,0,1]
+        self.shininess = 1
         self.vertices = []
         self.normals = []
         self.texture_coords = []
@@ -69,10 +69,10 @@ class SearObjectMesh:
         pack_str = ""
         for row in self.mesh_transform:
             for item in row:
-                pack_str += struct.pack("B", item)
+                pack_str += struct.pack("f", item)
         for row in self.texture_transform:
             for item in row:
-                pack_str += struct.pack("B", item)
+                pack_str += struct.pack("f", item)
         pack_str += struct.pack("265s", self.texture_map)
         pack_str += struct.pack("II", self.num_vertices, self.num_faces)
         pack_str += struct.pack("ffff", self.ambient[0], self.ambient[1],
@@ -91,7 +91,7 @@ class SearObjectMesh:
         for coord in self.texture_coords:
             pack_str += struct.pack("ff", coord[0], coord[1])
         for index in self.indices:
-            pack_str += struct.pack("I", index)
+            pack_str += struct.pack("III", index[0], index[1], index[2])
 
         return pack_str
 
@@ -114,10 +114,20 @@ def exportAsset(model, asset):
     out = toolbox.writeAny(asset)
     sear_object = SearObject()
     sear_object.header.num_meshes = model.getNumMeshes()
-    # do more stuff below
     meshes = model.getMeshes()
+
     for mesh in meshes:
         sear_mesh = SearObjectMesh()
         sear_mesh.num_vertices = mesh.getNumVertices()
         sear_mesh.vertices = mesh.getVertices()
+        sear_mesh.normals = mesh.getNormals()
+        sear_mesh.num_faces = mesh.getNumFaces()
+        coords = []
+        for i in range(sear_mesh.num_faces):
+            coords.append([0,0])
+        sear_mesh.texture_coords = coords
+        sear_mesh.indices = mesh.getFaces()
+        sear_object.meshes.append(sear_mesh)
+
+    out.write(sear_object.pack())
     out.close()
