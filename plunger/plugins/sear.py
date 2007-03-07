@@ -52,7 +52,7 @@ class SearObjectMesh:
     def __init__(self):
         self.mesh_transform = [[1,0,0,0], [0,1,0,0], [0,0,1,0], [0,0,0,1]]
         self.texture_transform = [[1,0,0,0], [0,1,0,0], [0,0,1,0], [0,0,0,1]]
-        self.texture_map = ""
+        self.texture_map = "default_texture"
         self.num_vertices = 0
         self.num_faces = 0
         self.ambient = [0,0,0,1]
