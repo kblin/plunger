@@ -73,6 +73,8 @@ def exportMeshInfo(model, out):
             for j in range(1,len(face)):
                 out.write(",%s" % face[j])
             out.write(")\n")
+        for material in mesh.getMaterials():
+            out.write("Material: %s\n" % material.getPath())
         i += 1
 
 
