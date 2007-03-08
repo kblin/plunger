@@ -108,7 +108,7 @@ class Parser:
         materials.materials.append(material)
 
         if "material" in node.attributes.keys():
-            material.path = node.attributes["material"].nodeValue
+            material.path = str(node.attributes["material"].nodeValue)
 
         self.parseChildNodes(node, mesh)
 

@@ -1,3 +1,11 @@
+2007-03-07  Kai Blin  <kai.blin@gmail.com>
+	* plugins/sear.py: Add importer.
+	* ogrexml_plugin/parser.py: Store material as an ASCII string, not unicode.
+	* plugins/info.py: Print info about the material
+
+2007-03-07  Kai Blin  <kai.blin@gmail.com>
+	* plugins/sear.py: Adjust to the new DOM.
+
 2007-03-06  Kai Blin  <kai.blin@gmail.com>
 	* dom.py: Throw away old DOM and start implementing a new one. Most plugins
 	  will be broken now.
