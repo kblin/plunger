@@ -34,12 +34,32 @@ def addAttr(obj, node, attr, convert_fun=lambda x: x):
     if attr in node.attributes.keys():
         setattr(obj, attr, convert_fun(node.attributes[attr].nodeValue))
 
+class Source:
+    """Model <source> tags that hold data until it can be stored in the DOM
+    """
+    def __init__(self):
+        self.id = ""
+        self.values = []
+        self.accessor = {}
+
 class Parser:
     """Parse Collada XML files
     """
 
     def __init__(self, model):
         self.model = model
+        self.known_sources = {}
+
+    def registerId(self, id, object):
+        self.known_sources[id] = object
+
+    def lookupId(self, id):
+        object = self.model.getNodeById(id)
+        if object:
+            return object
+        if id in self.known_sources.keys():
+            return self.known_sources[id]
+        return None
 
     def parse(self, node, parent=None):
         """Dispatch the correct function to parse the node
@@ -82,36 +102,30 @@ class Parser:
         """Handle the COLLADA tag
         We're interested in the version and xmlns attributes for now
         """
-        collada = dom.COLLADA()
-        self.model.model_tree_root = collada
-        addAttr(collada, node, "version")
-        addAttr(collada, node, "xmlns")
-        addAttr(collada, node, "base")
-
-        self.parseChildNodes(node, collada)
+        self.model.collada_xml = node.toxml()
+        self.parseChildNodes(node, self.model)
 
     def do_accessor(self, node, parent):
         """Handle the <accessor> tag
         """
-        accessor = dom.Accessor()
-        parent.child_element = accessor
-        accessor.parent = parent
+        keys = node.attributes.keys()
 
-        addAttr(accessor, node, "count", int)
-        addAttr(accessor, node, "offset", int)
-        addAttr(accessor, node, "source")
-        addAttr(accessor, node, "stride", int)
+        if "count" in keys:
+            parent.accessor["count"] = int(node.attributes["count"].nodeValue)
 
-        self.parseChildNodes(node, accessor)
+        if "offset" in keys:
+            parent.accessor["offset"] = int(node.attributes["offset"].nodeValue)
+
+        if "source" in keys:
+            parent.accessor["source"] = node.attributes["source"].nodeValue
+
+        if "stride" in keys:
+            parent.accessor["stride"] = int(node.attributes["stride"].nodeValue)
 
     def do_asset(self, node, parent):
-        """Handle the <asset> tag
+        """Skip the <asset> tag
         """
-        asset = dom.Asset()
-        parent.asset = asset
-        asset.parent = parent
-
-        self.parseChildNodes(node, asset)
+        pass
 
     def do_author(self, node, parent):
         """Handle the <author> tag
@@ -180,42 +194,34 @@ class Parser:
         self.parseChildNodes(node, cm)
 
     def do_extra(self, node, parent):
-        """handle the <extra> tag
+        """skip the <extra> tag
         """
-        #cheat and just store the xml code for now
-        extra = dom.Extra()
-        parent.extra = extra
-        for child in node.childNodes:
-            extra.collada_xml += child.toxml()
+        pass
 
     def do_float_array(self, node, parent):
         """Handle the <float_array> tag
         """
-        float_array = dom.FloatArray()
-        parent.content_array = float_array
-        float_array.parent = parent 
-
-        addAttr(float_array, node, "count", int)
-        addAttr(float_array, node, "name")
-        addAttr(float_array, node, "id")
-        self.model.registerId(float_array.id, float_array)
+        count = 0
+        if "count" in node.attributes.keys():
+            count = int(node.attributes["count"].nodeValue)
 
         if node.firstChild:
-            float_array.values = [float(f) for f in
-                node.firstChild.nodeValue.split()[:float_array.count]]
+            parent.values = [float(f) for f in
+                node.firstChild.nodeValue.split()[:count]]
 
     def do_geometry(self, node, parent):
         """Handle the <geometry> tag
         """
-        geometry = dom.Geometry()
-        parent.geometries.append(geometry)
-        geometry.parent = parent
+        mesh = dom.Mesh()
 
-        addAttr(geometry, node, "name")
-        addAttr(geometry, node, "id")
-        self.model.registerId(geometry.id, geometry)
+        for child in node.childNodes:
+            if not child.__class__.__name__ == "Element":
+                continue
 
-        self.parseChildNodes(node, geometry)
+            if child.tagName == "mesh":
+                parent.meshes.append(mesh)
+                mesh.parent = parent
+                self.parse(child, mesh)
 
     def do_h(self, node, parent):
         """Handle the <h> primitives tag
@@ -240,18 +246,6 @@ class Parser:
             count = int(node.attributes['count'].nodeValue)
         if node.firstChild:
             idref.values = node.firstChild.nodeValue.split()[:idref.count]
-
-    def do_input(self, node, parent):
-        """Handle the <input> tag
-        """
-        input = dom.Input()
-        parent.inputs.append(input)
-        input.parent = parent
-
-        addAttr(input, node, "offset")
-        addAttr(input, node, "semantic")
-        addAttr(input, node, "source")
-        addAttr(input, node, "set")
 
     def do_int_array(self, node, parent):
         """Handle the <int_array> tag
@@ -278,125 +272,82 @@ class Parser:
             parent.created = node.firstChild.nodeValue.split(" ")
 
     def do_library_animations(self, node, parent):
-        """handle the <library_animations> tag
+        """skip the <library_animations> tag
         """
-        #cheat and just store the xml code for now
-        animations = dom.LibraryAnimations()
-        animations.collada_xml = node.toxml()
-        parent.animations = animations
+        pass
 
     def do_library_animation_clips(self, node, parent):
-        """handle the <library_animation_clips> tag
+        """skip the <library_animation_clips> tag
         """
-        #cheat and just store the xml code for now
-        clips = dom.LibraryAnimationClips()
-        clips.collada_xml = node.toxml()
-        parent.clips = clips
+        pass
 
     def do_library_cameras(self, node, parent):
-        """handle the <library_cameras> tag
+        """skip the <library_cameras> tag
         """
-        #cheat and just store the xml code for now
-        cameras = dom.LibraryCameras()
-        cameras.collada_xml = node.toxml()
-        parent.cameras = cameras
+        pass
 
     def do_library_controllers(self, node, parent):
-        """handle the <library_controllers> tag
+        """skip the <library_controllers> tag
         """
-        #cheat and just store the xml code for now
-        controllers = dom.LibraryControllers()
-        controllers.collada_xml = node.toxml()
-        parent.controllers =  controllers
+        pass
 
     def do_library_effects(self, node, parent):
-        """handle the <library_effects> tag
+        """skip the <library_effects> tag
         """
-        #cheat and just store the xml code for now
-        effects = dom.LibraryEffects()
-        effects.collada_xml = node.toxml()
-        parent.effects = effects
+        pass
 
     def do_library_force_fields(self, node, parent):
-        """handle the <library_force_fields> tag
+        """skip the <library_force_fields> tag
         """
-        #cheat and just store the xml code for now
-        force_fields = dom.LibraryForceFields()
-        force_fields.collada_xml = node.toxml()
-        parent.force_fields = force_fields
+        pass
 
     def do_library_geometries(self, node, parent):
         """handle the <library_geometries> tag
         """
-        geometries = dom.LibraryGeometries()
-        parent.geometries = geometries
-        geometries.parent = parent
-
-        self.parseChildNodes(node, geometries)
+        meshes = dom.Meshes()
+        meshes.parent = parent
+        parent.meshes = meshes
+        self.parseChildNodes(node, meshes)
 
     def do_library_images(self, node, parent):
-        """handle the <library_images> tag
+        """skip the <library_images> tag
         """
-        #cheat and just store the xml code for now
-        images = dom.LibraryImages()
-        images.collada_xml = node.toxml()
-        parent.images = images
+        pass
 
     def do_library_lights(self, node, parent):
-        """handle the <library_lights> tag
+        """skip the <library_lights> tag
         """
-        #cheat and just store the xml code for now
-        lights = dom.LibraryLights()
-        lights.collada_xml = node.toxml()
-        parent.lights = lights
+        pass
 
     def do_library_materials(self, node, parent):
-        """handle the <library_materials> tag
+        """skip the <library_materials> tag
         """
-        #cheat and just store the xml code for now
-        materials = dom.LibraryMaterials()
-        materials.collada_xml = node.toxml()
-        parent.materials = materials
+        pass
 
     def do_library_nodes(self, node, parent):
-        """handle the <library_nodes> tag
+        """skip the <library_nodes> tag
         """
-        #cheat and just store the xml code for now
-        nodes = dom.LibraryNodes()
-        nodes.collada_xml = node.toxml()
-        parent.nodes = nodes
+        pass
 
     def do_library_physics_materials(self, node, parent):
-        """handle the <library_physics_materials> tag
+        """skip the <library_physics_materials> tag
         """
-        #cheat and just store the xml code for now
-        physics_materials = dom.LibraryPhysicsMaterials()
-        physics_materials.collada_xml = node.toxml()
-        parent.physics_materials = physics_materials
+        pass
 
     def do_library_physics_models(self, node, parent):
-        """handle the <library_physics_models> tag
+        """skip the <library_physics_models> tag
         """
-        #cheat and just store the xml code for now
-        physics_models = dom.LibraryPhysicsModels()
-        physics_models.collada_xml = node.toxml()
-        parent.physics_models = physics_models
+        pass
 
     def do_library_physics_scenes(self, node, parent):
-        """handle the <library_physics_scenes> tag
+        """skip the <library_physics_scenes> tag
         """
-        #cheat and just store the xml code for now
-        physics_scenes = dom.LibraryPhysicsScenes()
-        physics_scenes.collada_xml = node.toxml()
-        parent.physics_scenes = physics_scenes
+        pass
 
     def do_library_visual_scenes(self, node, parent):
-        """handle the <library_effects> tag
+        """skip the <library_effects> tag
         """
-        #cheat and just store the xml code for now
-        visual_scenes = dom.LibraryVisualScenes()
-        visual_scenes.collada_xml = node.toxml()
-        parent.visual_scenes = visual_scenes
+        pass
 
     def do_lines(self, node, parent):
         """Handle the <lines> tag
@@ -428,11 +379,7 @@ class Parser:
     def do_mesh(self, node, parent):
         """Handle the <mesh> tag
         """
-        mesh = dom.Mesh()
-        mesh.parent = parent
-        parent.content = mesh
-
-        self.parseChildNodes(node, mesh)
+        self.parseChildNodes(node, parent)
 
     def do_modified(self, node, parent):
         """Handle the <modified> tag
@@ -454,13 +401,6 @@ class Parser:
 
         if node.firstChild:
             name_array.values = node.firstChild.nodeValue.split()[:name_array.count]
-
-    def do_p(self, node, parent):
-        """Handle the <p> primitives tag
-        """
-        if node.firstChild:
-            parent.primitives.append([ int(i) for i in
-                node.firstChild.nodeValue.split()])
 
     def do_param(self, node, parent):
         """Handle the <param> tag
@@ -516,23 +456,19 @@ class Parser:
             parent.revision = node.firstChild.nodeValue
 
     def do_scene(self, node, parent):
-        """handle the <scene> tag
+        """skip the <scene> tag
         """
-        #cheat and just store the xml code for now
-        scene = dom.Scene()
-        scene.collada_xml = node.toxml()
-        parent.scene = scene
+        pass
 
     def do_source(self, node, parent):
         """Handle the <source> tag
         """
-        source = dom.Source()
+        source = Source()
         source.parent = parent
-        parent.sources.append(source)
 
         addAttr(source, node, "name")
         addAttr(source, node, "id")
-        self.model.registerId(source.id, source)
+        self.registerId(source.id, source)
 
         self.parseChildNodes(node, source)
 
@@ -556,11 +492,7 @@ class Parser:
     def do_technique_common(self, node, parent):
         """Handle the <technique_common> tag
         """
-        tc = dom.TechniqueCommon()
-        tc.parent = parent
-        parent.technique_common = tc
-
-        self.parseChildNodes(node, tc)
+        self.parseChildNodes(node, parent)
 
     def do_title(self, node, parent):
         """Handle the <title> tag
@@ -571,15 +503,102 @@ class Parser:
     def do_triangles(self, node, parent):
         """Handle the <triangles> tag
         """
-        tri = dom.Triangles()
-        tri.parent = parent
-        parent.triangles.append(tri)
+        faces = dom.Faces()
+        faces.parent = parent
+        parent.faces = faces
 
-        addAttr(tri, node, "name")
-        addAttr(tri, node, "count", int)
-        addAttr(tri, node, "material")
+        if "count" in node.attributes.keys():
+            faces.count = int(node.attributes['count'].nodeValue)
 
-        self.parseChildNodes(node, tri)
+        vertex_offset = 0
+        vertex_source = ""
+        normal_offset = 0
+        normal_source = ""
+        semantic = ""
+        primitives = []
+        max_offset = 0
+
+        for child in node.childNodes:
+            if not child.__class__.__name__ == "Element":
+                continue
+
+            if child.tagName == "input":
+                keys = child.attributes.keys()
+                if "semantic" in keys:
+                    semantic = child.attributes['semantic'].nodeValue
+
+                if semantic == "VERTEX":
+                    if "offset" in keys:
+                        vertex_offset = int(child.attributes['offset'].nodeValue)
+                        if vertex_offset > max_offset:
+                            max_offset = vertex_offset
+                    if "source" in keys:
+                        vertex_source =\
+                            child.attributes['source'].nodeValue.replace('#','')
+                elif semantic == "NORMAL":
+                    if "offset" in keys:
+                        normal_offset = int(child.attributes['offset'].nodeValue)
+                        if normal_offset > max_offset:
+                            max_offset = normal_offset
+                    if "source" in keys:
+                        normal_source =\
+                            child.attributes['source'].nodeValue.replace('#','')
+
+            elif child.tagName == "p":
+                if child.firstChild:
+                    primitives = [int(i) for i in
+                    child.firstChild.nodeValue.split()]
+
+        normals = self.lookupId(normal_source)
+
+        for i in range(0,len(primitives), (max_offset + 1) * 3 ):
+            face = dom.Face()
+            face.parent = faces
+            faces.faces.append(face)
+            if vertex_source:
+                vlist = []
+                vlist.append(primitives[ i + vertex_offset])
+                vlist.append(primitives[ i + vertex_offset + max_offset +1])
+                vlist.append(primitives[ i + vertex_offset + (2* (max_offset + 1))])
+                face.vertex_list = vlist
+
+            if normals:
+                nlist = []
+                nlist.append(primitives[ i + normal_offset])
+                nlist.append(primitives[ i + normal_offset + max_offset + 1])
+                nlist.append(primitives[ i + normal_offset + (2* (max_offset + 1))])
+                for item in nlist:
+                    face.normals.append(normals.values[item])
+
+        #TODO: calculate vertex normals from face normals
+        mesh = faces.parent
+        vidx = 0
+        for vertex in mesh.getVertices():
+            print "TODO: calculate vertex normal for vertex %s" % vidx
+            x = 0
+            y = 0
+            z = 0
+            total = 0
+            for face in faces.faces:
+                if vidx in face.vertex_list:
+                    x += face.normals[0]
+                    y += face.normals[1]
+                    z += face.normals[2]
+                    total += 1
+            if total:
+                x /= total
+                y /= total
+                z /= total
+
+            import math
+            length = math.sqrt(x*x + y*y + z*z)
+            if len:
+                x /= length
+                y /= length
+                z /= length
+
+            vertex.normals = [x, y, z]
+            vidx += 1
 
     def do_trifans(self, node, parent):
         """Handle the <trifans> tag
@@ -632,12 +651,45 @@ class Parser:
         """Handle the <vertices> tag
         """
         vertices = dom.Vertices()
-        parent.vertices.append(vertices)
+        parent.vertices = vertices
+        vertices.parent = parent
 
-        addAttr(vertices, node, "name")
-        addAttr(vertices, node, "id")
-        self.model.registerId(vertices.id, vertices)
+        if "id" in node.attributes.keys():
+            self.model.registerId(node.attributes['id'].nodeValue, vertices)
 
-        self.parseChildNodes(node, vertices)
+        offset = 0
+        source = ""
+        semantic = ""
 
+        for child in node.childNodes:
+            if not child.__class__.__name__ == "Element":
+                continue
+
+            if child.tagName == "input":
+                keys = child.attributes.keys()
+                if "semantic" in keys:
+                    semantic = child.attributes['semantic'].nodeValue
+
+                if not semantic == "POSITION":
+                    print "Looks like an invalid tag, ignoring"
+                    return
+                else:
+                    if "source" in keys:
+                        source =\
+                            child.attributes['source'].nodeValue.replace('#', '')
+
+        positions = self.lookupId(source)
+
+        if not positions:
+            print "Error: could not load source '%s'" % source
+            return
+
+        i = 0
+        for i in range(0, len(positions.values), 3):
+            vertex = dom.Vertex()
+            vertex.parent = vertices
+            vertices.vertices.append(vertex)
+
+            vertex.position = positions.values[i:i+3]
+            vertex.uv_coords = [0,0]
 

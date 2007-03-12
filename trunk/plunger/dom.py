@@ -70,7 +70,9 @@ class Model:
         self.idmap[id] = node
 
     def getNodeById(self, id):
-        return self.idmap[id]
+        if id in self.idmap.keys():
+            return self.idmap[id]
+        return None
 
 class Meshes(PlungerNode):
     def __init__(self):
@@ -124,9 +126,11 @@ class Faces(PlungerNode):
     def __init__(self):
         PlungerNode.__init__(self)
         self.faces = []
+        self.count = 0
 
     def getNumFaces(self):
-        return len(self.faces)
+        self.count = len(self.faces)
+        return self.count
 
     def getFaces(self):
         faces = []
@@ -160,9 +164,13 @@ class Face(PlungerNode):
     def __init__(self):
         PlungerNode.__init__(self)
         self.vertex_list = []
+        self.normals = []
 
     def getFace(self):
         return self.vertex_list
+
+    def getNormals(self):
+        return self.normals
 
 class Vertex(PlungerNode):
     def __init__(self):

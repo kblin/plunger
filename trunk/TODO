@@ -3,14 +3,16 @@ PLUNGER TODO
 
 Version 0.0.1:
 --------------
-* Get the text interface set up [done]
-* Load Collada.dae files. [ 40%]
+* Get the text interface set up        [done]
+* Load Collada.dae files.              [ 60%]
+* Begin exporting to sear object files [done]
+* Begin exporting to ogre mesh.xml     [done]
 
 Version 0.0.2:
 --------------
-* Begin exporting to sear object files
-* Begin exporting to ogre mesh.xml
+* Export to Collada .dae files.        [  0%]
 
 Version 0.0.3:
 --------------
 * Conversion of Collada -> Cal3D
+* Support animation for Ogre xml
