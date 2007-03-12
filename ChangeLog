@@ -1,3 +1,12 @@
+2007-03-12  Kai Blin  <kai.blin@gmail.com>
+	* collada_plugin/parser.py: Parse face normals and calculate vertex normals
+	  from them.
+	* dom.py: Faces have normals, too.
+
+2007-03-12  Kai Blin  <kai.blin@gmail.com>
+	* dom.py: fix the error case on id lookups.
+	* collada_plugin/parser.py: Rewrite parts to adjust to the new DOM.
+
 2007-03-07  Kai Blin  <kai.blin@gmail.com>
 	* plugins/sear.py: Add importer.
 	* ogrexml_plugin/parser.py: Store material as an ASCII string, not unicode.
