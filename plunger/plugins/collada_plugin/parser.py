@@ -570,11 +570,9 @@ class Parser:
                 for item in nlist:
                     face.normals.append(normals.values[item])
 
-        #TODO: calculate vertex normals from face normals
         mesh = faces.parent
         vidx = 0
         for vertex in mesh.getVertices():
-            print "TODO: calculate vertex normal for vertex %s" % vidx
             x = 0
             y = 0
             z = 0
