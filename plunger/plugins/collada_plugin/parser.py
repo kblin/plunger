@@ -130,68 +130,42 @@ class Parser:
     def do_author(self, node, parent):
         """Handle the <author> tag
         """
-        if node.firstChild:
-            parent.author = node.firstChild.nodeValue
+        raise NotImplementedError
 
     def do_authoring_tool(self, node, parent):
         """Handle the <authoring_tool> tag
         """
-        if node.firstChild:
-            parent.authoring_tool = node.firstChild.nodeValue
+        raise NotImplementedError
 
     def do_bool_array(self, node, parent):
         """Handle the <bool_array> tag
         """
-        bool = dom.BoolArray()
-        parent.content_array = bool
-        bool.parent = parent
-
-        addAttr(bool, node, "count", int)
-        addAttr(bool, node, "name")
-        addAttr(bool, node, "id")
-        self.model.registerId(bool.id, bool)
-
-        if node.firstChild:
-            bool.values = [b == "true" for b in
-                node.firstChild.nodeValue.split()[:bool.count]]
+        raise NotImplementedError
 
     def do_comments(self, node, parent):
         """Handle the <comments> tag
         """
-        if node.firstChild:
-            parent.comments = node.firstChild.nodeValue
+        raise NotImplementedError
 
     def do_contributor(self, node, parent):
         """Handle the <contributor> tag
         """
-        contributor = dom.Contributor()
-        parent.contributor = contributor
-        contributor.parent = parent
-
-        self.parseChildNodes(node, contributor)
+        raise NotImplementedError
 
     def do_copyright(self, node, parent):
         """Handle the <copyright> tag
         """
-        if node.firstChild:
-            parent.copyright = node.firstChild.nodeValue
+        raise NotImplementedError
 
     def do_created(self, node, parent):
         """Handle the <created> tag
         """
-        if node.firstChild:
-            parent.created = node.firstChild.nodeValue
+        raise NotImplementedError
 
     def do_convex_mesh(self, node, parent):
         """Handle the <convex_mesh> tag
         """
-        cm = dom.ConvexMesh()
-        cm.parent = parent
-        parent.content = cm
-
-        addAttr(cm, node, "convex_hull_of")
-
-        self.parseChildNodes(node, cm)
+        raise NotImplementedError
 
     def do_extra(self, node, parent):
         """skip the <extra> tag
@@ -226,50 +200,22 @@ class Parser:
     def do_h(self, node, parent):
         """Handle the <h> primitives tag
         """
-        if node.firstChild:
-            parent.holes.append([ int(i) for i in
-                node.firstChild.nodeValue.split()])
+        raise NotImplementedError
 
     def do_IDREF_array(self, node, parent):
         """Handle the <IDEREF_array> tag
         """
-        idref = dom.IDREFArray()
-        parent.content_array = idref
-        idref.parent = parent
-
-        addAttr(idref, node, "count", int)
-        addAttr(idref, node, "name")
-        addAttr(idref, node, "id")
-        self.model.registerId(idref.id, idref)
-
-        if "count" in node.attributes.keys():
-            count = int(node.attributes['count'].nodeValue)
-        if node.firstChild:
-            idref.values = node.firstChild.nodeValue.split()[:idref.count]
+        raise NotImplementedError
 
     def do_int_array(self, node, parent):
         """Handle the <int_array> tag
         """
-        int_array = dom.IntArray()
-        parent.content_array = int_array
-        int_array.parent = parent
-
-        addAttr(int_array, node, "count", int)
-        addAttr(int_array, node, "name")
-        addAttr(int_array, node, "id")
-        addAttr(int_array, node, "minInclusive")
-        addAttr(int_array, node, "maxInclusive")
-        self.model.registerId(int_array.id, int_array)
-
-        if node.firstChild:
-            int_array.values = [int(f) for f in
-                node.firstChild.nodeValue.split()[:int_array.count]]
+        raise NotImplementedError
 
     def do_keywords(self, node, parent):
         """Handle the <keywords> tag
         """
-        if node.firstChild:
-            parent.created = node.firstChild.nodeValue.split(" ")
+        raise NotImplementedError
 
     def do_library_animations(self, node, parent):
         """skip the <library_animations> tag
@@ -352,29 +298,12 @@ class Parser:
     def do_lines(self, node, parent):
         """Handle the <lines> tag
         """
-        lines = dom.Lines()
-        lines.parent = parent
-        parent.lines.append(lines)
-
-        addAttr(lines, node, "name")
-        addAttr(lines, node, "material")
-        addAttr(lines, node, "count", int)
-
-        self.parseChildNodes(node, lines)
+        raise NotImplementedError
 
     def do_linestrips(self, node, parent):
         """Handle the <linestrips> tag
         """
-        linestripss = dom.Linestrips()
-        linestrips.parent = parent
-        parent.linestrips.append(linestrips)
-
-        addAttr(linestrips, node, "name")
-        addAttr(linestrips, node, "material")
-        addAttr(linestrips, node, "count", int)
-
-        self.parseChildNodes(node, linestrips)
-
+        raise NotImplementedError
 
     def do_mesh(self, node, parent):
         """Handle the <mesh> tag
@@ -384,35 +313,17 @@ class Parser:
     def do_modified(self, node, parent):
         """Handle the <modified> tag
         """
-        if node.firstChild:
-            parent.modified = node.firstChild.nodeValue
+        raise NotImplementedError
 
     def do_Name_array(self, node, parent):
         """Handle the <Name_array> tag
         """
-        name_array = dom.NameArray()
-        parent.content_array = name_array
-        name_array.parent = parent
-
-        addAttr(name_array, node, "count", int)
-        addAttr(name_array, node, "name")
-        addAttr(name_array, node, "id")
-        self.model.registerId(name_array.id, name_array)
-
-        if node.firstChild:
-            name_array.values = node.firstChild.nodeValue.split()[:name_array.count]
+        raise NotImplementedError
 
     def do_param(self, node, parent):
         """Handle the <param> tag
         """
-        param = dom.Param()
-        parent.params.append(param)
-        param.parent = parent
-
-        addAttr(param, node, "name")
-        addAttr(param, node, "sid")
-        addAttr(param, node, "type")
-        addAttr(param, node, "semantic")
+        raise NotImplementedError
 
     def do_ph(self, node, parent):
         """Handle the <ph> tag
@@ -426,34 +337,17 @@ class Parser:
     def do_polygons(self, node, parent):
         """Handle the <polygons> tag
         """
-        poly = dom.Polygons()
-        poly.parent = parent
-        parent.polygons.append(ploy)
-
-        addAttr(poly, node, "name")
-        addAttr(poly, node, "material")
-        addAttr(poly, node, "count", int)
-
-        self.parseChildNodes(node, poly)
+        raise NotImplementedError
 
     def do_polylist(self, node, parent):
         """Handle the <polylist> tag
         """
-        poly = dom.Polylist()
-        poly.parent = parent
-        parent.polylists.append(poly)
-
-        addAttr(poly, node, "name")
-        addAttr(poly, node, "material")
-        addAttr(poly, node, "count", int)
-
-        self.parseChildNodes(node, poly)
+        raise NotImplementedError
 
     def do_revision(self, node, parent):
         """Handle the <revision> tag
         """
-        if node.firstChild:
-            parent.revision = node.firstChild.nodeValue
+        raise NotImplementedError
 
     def do_scene(self, node, parent):
         """skip the <scene> tag
@@ -475,19 +369,17 @@ class Parser:
     def do_source_data(self, node, parent):
         """Handle the <source_data> tag
         """
-        if node.firstChild:
-            parent.source_data = node.firstChild.nodeValue
+        raise NotImplementedError
 
     def do_subject(self, node, parent):
         """Handle the <subject> tag
         """
-        if node.firstChild:
-            parent.subject = node.firstChild.nodeValue
+        raise NotImplemtentedError
 
     def do_technique(self, node, parent):
         """Handle the <technique> tag
         """
-        pass
+        raise NotImplementedError
 
     def do_technique_common(self, node, parent):
         """Handle the <technique_common> tag
@@ -497,8 +389,7 @@ class Parser:
     def do_title(self, node, parent):
         """Handle the <title> tag
         """
-        if node.firstChild:
-            parent.title = node.firstChild.nodeValue
+        raise NotImplementedError
 
     def do_triangles(self, node, parent):
         """Handle the <triangles> tag
@@ -514,6 +405,8 @@ class Parser:
         vertex_source = ""
         normal_offset = 0
         normal_source = ""
+        tex_coord_offset = 0
+        tex_coord_source = ""
         semantic = ""
         primitives = []
         max_offset = 0
@@ -543,6 +436,16 @@ class Parser:
                     if "source" in keys:
                         normal_source =\
                             child.attributes['source'].nodeValue.replace('#','')
+                elif semantic == "TEXCOORD":
+                    if "offset" in keys:
+                        tex_coord_offset = int(child.attributes['offset'].nodeValue)
+                        if tex_coord_offset > max_offset:
+                            max_offset = tex_coord_offset
+                else:
+                    if "offset" in keys:
+                        offset = int(child.attributes['offset'].nodeValue)
+                        if offset > max_offset:
+                            max_offset = offset
 
             elif child.tagName == "p":
                 if child.firstChild:
@@ -590,7 +493,7 @@ class Parser:
 
             import math
             length = math.sqrt(x*x + y*y + z*z)
-            if len:
+            if length:
                 x /= length
                 y /= length
                 z /= length
@@ -601,49 +504,27 @@ class Parser:
     def do_trifans(self, node, parent):
         """Handle the <trifans> tag
         """
-        tri = dom.TriFans()
-        tri.parent = parent
-        parent.triangles.append(tri)
-
-        addAttr(tri, node, "name")
-        addAttr(tri, node, "count", int)
-        addAttr(tri, node, "material")
-
-        self.parseChildNodes(node, tri)
+        raise NotImplementedError
 
     def do_tristrips(self, node, parent):
         """Handle the <tristrips> tag
         """
-        tri = dom.TriStrips()
-        tri.parent = parent
-        parent.triangles.append(tri)
-
-        addAttr(tri, node, "name")
-        addAttr(tri, node, "count", int)
-        addAttr(tri, node, "material")
-
-        self.parseChildNodes(node, tri)
+        raise NotImplementedError
 
     def do_unit(self, node, parent):
         """Handle the <unit> tag
         """
-        keys = node.attributes.keys()
-        if "name" in keys:
-            parent.unit['name'] = node.attributes['name'].nodeValue
-        if "meter" in keys:
-            parent.unit['meter'] = float(node.attributes['meter'].nodeValue)
+        raise NotImplementedError
 
     def do_up_axis(self, node, parent):
         """Handle the <up_axis> tag
         """
-        if node.firstChild:
-            parent.up_axis = node.firstChild.nodeValue
+        raise NotImplementedError
 
     def do_vcount(self, node, parent):
         """Handle the <vcount> tag
         """
-        if node.firstChild:
-            parent.vcount = [int(i) for i in node.firstChild.nodeValue.split()]
+        raise NotImplementedError
 
     def do_vertices(self, node, parent):
         """Handle the <vertices> tag

@@ -1,3 +1,11 @@
+2007-04-09  Kai Blin  <kai.blin@gmail.com>
+	* collada_plugin/parser.py: Fix offset bug in <input> handling.
+
+2007-03-12  Kai Blin  <kai.blin@gmail.com>
+	* collada_plugin/parser.py: Raise NotImplementedError on not implemented
+	  tags to avoid random errors caused by the old dom not matching the new dom
+	* plugins/md3.py: Started working on the exporter.
+
 2007-03-12  Kai Blin  <kai.blin@gmail.com>
 	* collada_plugin/parser.py: Parse face normals and calculate vertex normals
 	  from them.
