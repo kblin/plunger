@@ -6,7 +6,10 @@ Version 0.0.1:
 * Get the text interface set up        [done]
 * Load Collada.dae files.              [ 60%]
 * Begin exporting to sear object files [done]
-* Begin exporting to ogre mesh.xml     [done]
+* Begin exporting to ogre mesh.xml     [ 90%]
+  # Ogre x/y/z --> Blender x/-z/y
+* Make plunger installable, so the     [  0%]
+  plugins are found.
 
 Version 0.0.2:
 --------------
@@ -16,3 +19,18 @@ Version 0.0.3:
 --------------
 * Conversion of Collada -> Cal3D
 * Support animation for Ogre xml
+
+
+Random Thoughts
+---------------
+simon	    what might be useful is added some options to do some processing on the models
+simon	    e.g. scaling, rotations and translations
+simon	    i'm currently doing it already in sear, but would be better not to have to do that
+simon	    if you look at sear/loaders/StaticObjectFunctions.cpp  I've already implemented the kinda code you would need
+simon	    the most useful part would be translating the model bacck to the origin. sometimes they have funny offsets
+---
+simon	    btw it would be good if i could run plunger from any dir
+---
+simon	    plunger has trouble converting this file from the media repo, 3d_objects/items/building/models/castle/curtainwall/curtain_walls.mesh.xml
+---
+
