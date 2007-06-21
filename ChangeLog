@@ -1,4 +1,7 @@
 2007-06-21  Kai Blin  <kai.blin@gmail.com>
+	* README, INSTALL: Prepare for 0.0.1 release.
+
+2007-06-21  Kai Blin  <kai.blin@gmail.com>
 	* plugins/__init__.py, registry.py: Fix module loading when installed.
 	* MANIFEST.in: Make sure a couple of extra files are in the source
 	  distribution.

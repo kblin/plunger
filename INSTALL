@@ -1,1 +1,10 @@
-Installation is not possible yet.
+Installation is provided by python distutils.
+Simply do
+
+python setup.py install
+
+as root. Alternative, you can change the default prefix by
+specifying a custom --prefix, e.g.
+
+python setup.py install --prefix=$HOME
+
