@@ -1,4 +1,8 @@
 2007-06-21  Kai Blin  <kai.blin@gmail.com>
+	* __init__.py: Fix a non-ASCII whitespace
+	* registry.py: don't try to load __init__.py as plugin
+
+2007-06-21  Kai Blin  <kai.blin@gmail.com>
 	* plugins/__init__.py: Make plugins a package to make distutils happy.
 	* setup.py: Initial distutils installer.
 

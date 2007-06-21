@@ -63,7 +63,7 @@ def loadPlugins(plugin_dir):
     plugins = []
     for filename in os.listdir(plugin_dir):
         name, ext = os.path.splitext(filename)
-        if ext == ".py":
+        if ext == ".py" and name != "__init__":
             plugins.append(name)
 
     sys.path.append(plugin_dir)
