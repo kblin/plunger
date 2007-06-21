@@ -100,18 +100,19 @@ class Generator:
     def do_Vertex(self, node, depth):
         """The Vertex object maps to a <vertex> tag and contains the <position>
         and possibly <normal> and <texcoord> tags.
+        Note that plunger uses "y is up" and Ogre uses "z is up".
         """
         self.indent(depth)
         self.append('<vertex>\n')
 
         self.indent(depth+1)
         self.append('<position x="%s" y="%s" z="%s" />\n' %
-                tuple(node.getPosition()))
+                (node.getPosition()[0], node.getPosition()[2], node.getPosition()[1] * -1.0))
 
         if node.getNormals():
             self.indent(depth+1)
             self.append('<normal x="%s" y="%s" z="%s" />\n' %
-                tuple(node.getNormals()))
+                (node.getNormals()[0], node.getNormals()[2], node.getNormals()[1] * -1.0))
 
         if node.getUVCoords():
             self.indent(depth+1)

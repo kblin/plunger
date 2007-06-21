@@ -1,4 +1,8 @@
 2007-06-21  Kai Blin  <kai.blin@gmail.com>
+	* ogrexml_plugin/parser.py, ogrexml_plugin/generator.py: Fix "Y is up"
+	  vs "Z is up" issue Simon reported.
+
+2007-06-21  Kai Blin  <kai.blin@gmail.com>
 	* README, INSTALL: Prepare for 0.0.1 release.
 
 2007-06-21  Kai Blin  <kai.blin@gmail.com>
