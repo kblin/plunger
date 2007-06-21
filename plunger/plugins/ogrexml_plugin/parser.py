@@ -161,20 +161,22 @@ class Parser:
 
     def do_position(self, node, parent):
         """Handle the <position> tag
+        Note that Ogre uses "z is up", whereas plunger uses "y is up"
         """
         position = []
         position.append(float(node.attributes['x'].nodeValue))
+        position.append(float(node.attributes['z'].nodeValue) * -1.0)
         position.append(float(node.attributes['y'].nodeValue))
-        position.append(float(node.attributes['z'].nodeValue))
         parent.position = position
 
     def do_normal(self, node, parent):
         """Handle the <normal>
+        Note that Ogre uses "z is up", whereas plunger uses "y is up"
         """
         normal = []
         normal.append(float(node.attributes['x'].nodeValue))
+        normal.append(float(node.attributes['z'].nodeValue) * -1.0)
         normal.append(float(node.attributes['y'].nodeValue))
-        normal.append(float(node.attributes['z'].nodeValue))
         parent.normals = normal
 
     def do_texcoord(self, node, parent):

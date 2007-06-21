@@ -4,15 +4,16 @@ PLUNGER TODO
 Version 0.0.1:
 --------------
 * Get the text interface set up        [done]
-* Load Collada.dae files.              [ 60%]
+* Load basic Collada.dae files.        [done]
 * Begin exporting to sear object files [done]
-* Begin exporting to ogre mesh.xml     [ 90%]
+* Begin exporting to ogre mesh.xml     [done]
   # Ogre x/y/z --> Blender x/-z/y
-* Make plunger installable, so the     [  0%]
+* Make plunger installable, so the     [done]
   plugins are found.
 
 Version 0.0.2:
 --------------
+* Improve Collada.dae file import      [  0%]
 * Export to Collada .dae files.        [  0%]
 
 Version 0.0.3:
