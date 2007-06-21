@@ -4,3 +4,5 @@ plunger/*.dae
 plunder/*.md3
 .git/
 *.e3?
+MANIFEST
+dist

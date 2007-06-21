@@ -1,3 +1,7 @@
+2007-06-21  Kai Blin  <kai.blin@gmail.com>
+	* plugins/__init__.py: Make plugins a package to make distutils happy.
+	* setup.py: Initial distutils installer.
+
 2007-04-09  Kai Blin  <kai.blin@gmail.com>
 	* collada_plugin/parser.py: Fix offset bug in <input> handling.
 
