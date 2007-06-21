@@ -1,0 +1,73 @@
+                     **************************************
+                     *               PLUNGER              *
+                     *        A 3D mesh converter         *
+                     **************************************
+
+About
+-----
+Plunger is a Collada to client 3D format converter for the WorldForge project.
+It is designed in a way that should allow adding new 3D formats in a simple
+way.
+
+It is still under development, but it will eventually support MD3, Sear's own
+static mesh format, Cal3D and Ogre's mesh.xml format.
+
+Currently, it is in a pre-alpha stage, so it might still delete all your data
+and eat all the food in your fridge. Still, feedback and patches are greatly
+appreciated.
+
+Design goals
+------------
+    *  Plugin architecture to allow adding new formats.
+    * Functionality separated from the user interface.
+
+Supported formats
+-----------------
+    * Collada (50% done)
+    * SearObject (100% done)
+    * Ogre mesh.xml (100% done)
+    * Cal3D XML (todo)
+    * MD3 (50% done)
+
+Usage
+-----
+Usage: plunger [options] <input name> <output name>
+Possible options are:
+--help              -h          Display this help text.
+--debug             -d          Print debugging output.
+--in=<format>       -i <format> Input file is in <format>  [default: collada]
+--out=<format>      -o <format> Convert to <format>        [default: info]
+--display-formats   -D          List supported input/output formats
+
+If infile or outfile is -, stdin/stout is used.
+
+Installation
+------------
+See INSTALL for installation instructions.
+
+Examples
+--------
+
+Display all supported formats
+
+$ plunger --display-formats
+Supported import formats: sear, collada, ogrexml
+Supported export formats: info, collada, ogrexml, sear, md3
+$
+
+Convert a collada file to MD3
+
+$ plunger -o md3 example.dae example.md3
+$
+
+Show information about a Sear object file on stdout
+
+$ plunger -i sear example.sobj -
+Lots of information
+$
+
+Pipe a collada file to OgreXMLConverter
+
+$ cat example.dae | plunger -o ogrexml - - | OgreXMLConverter
+$
+
