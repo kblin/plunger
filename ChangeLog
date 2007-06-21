@@ -1,4 +1,11 @@
 2007-06-21  Kai Blin  <kai.blin@gmail.com>
+	* plugins/__init__.py, registry.py: Fix module loading when installed.
+	* MANIFEST.in: Make sure a couple of extra files are in the source
+	  distribution.
+	* setup.py: Don't install those said extra files until there's a way
+	  to install docs cross-platform.
+
+2007-06-21  Kai Blin  <kai.blin@gmail.com>
 	* __init__.py: Fix a non-ASCII whitespace
 	* registry.py: don't try to load __init__.py as plugin
 

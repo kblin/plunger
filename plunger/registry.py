@@ -61,15 +61,22 @@ def getImporter(format):
 
 def loadPlugins(plugin_dir):
     plugins = []
-    for filename in os.listdir(plugin_dir):
-        name, ext = os.path.splitext(filename)
-        if ext == ".py" and name != "__init__":
-            plugins.append(name)
+    try:
+        import plunger.plugins
+        for plugin in plunger.plugins.__all__:
+            module = __import__("plunger.plugins.%s" % plugin, fromlist=["plunger", "plugins"])
+            register(module, module.format, module.does_import, module.does_export)
+    except ImportError:
+    	for filename in os.listdir(plugin_dir):
+            name, ext = os.path.splitext(filename)
+            if ext == ".py" and name != "__init__":
+                plugins.append(name)
 
-    sys.path.append(plugin_dir)
+        sys.path.append(plugin_dir)
 
-    for plugin in plugins:
-        module = __import__(plugin)
-        register(module, module.format, module.does_import, module.does_export)
+        for plugin in plugins:
+            module = __import__(plugin)
+            register(module, module.format, module.does_import, module.does_export)
 
-    sys.path.pop()
+        sys.path.pop()
+
