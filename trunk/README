@@ -12,7 +12,7 @@ way.
 It is still under development, but it will eventually support MD3, Sear's own
 static mesh format, Cal3D and Ogre's mesh.xml format.
 
-Currently, it is in a pre-alpha stage, so it might still delete all your data
+Currently, Plunger is in a alpha stage, so it might still delete all your data
 and eat all the food in your fridge. Still, feedback and patches are greatly
 appreciated.
 
@@ -38,6 +38,7 @@ Possible options are:
 --in=<format>       -i <format> Input file is in <format>  [default: collada]
 --out=<format>      -o <format> Convert to <format>        [default: info]
 --display-formats   -D          List supported input/output formats
+--version           -V          Display plunger version
 
 If infile or outfile is -, stdin/stout is used.
 

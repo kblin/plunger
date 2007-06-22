@@ -37,7 +37,7 @@ ext = "mesh.xml"
 needs_dir = False
 does_import = True
 does_export = True
-version = "0.0.1"
+version = "0.1.0"
 
 def importAsset(model, asset):
     """Import a mesh.xml object

@@ -35,7 +35,7 @@ ext = ""
 needs_dir = False
 does_import = False
 does_export = True
-version = "0.0.1"
+version = "0.1.0"
 
 def printDelimiter(out):
     begin_delim = "x"

@@ -1,4 +1,8 @@
 2007-06-22  Kai Blin  <kai.blin@gmail.com>
+	* NEWS, TODO, README: 
+	* plunger, plugins/info.py, plugins/ogrexml.py: Bump version to 0.1.0
+
+2007-06-22  Kai Blin  <kai.blin@gmail.com>
 	* plunger: Fix parsing of the long options
 
 2007-06-21  Kai Blin  <kai.blin@gmail.com>
