@@ -2,3 +2,6 @@
 .*.swp
 plunger/*.dae
 plunder/*.md3
+MANIFEST
+plunger.e3p
+plunger.e3t
