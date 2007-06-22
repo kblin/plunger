@@ -1,5 +1,5 @@
 2007-06-22  Kai Blin  <kai.blin@gmail.com>
-	* NEWS, TODO, README: 
+	* NEWS, TODO, README, setup.py: Prepare for the first alpha release.
 	* plunger, plugins/info.py, plugins/ogrexml.py: Bump version to 0.1.0
 
 2007-06-22  Kai Blin  <kai.blin@gmail.com>

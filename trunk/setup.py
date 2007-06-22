@@ -1,7 +1,7 @@
 #!/bin/env python
 from distutils.core import setup
 setup(name='plunger',
-      version='0.0.1',
+      version='0.1.0',
       description='A 3D format converter',
       author='Kai Blin',
       author_email='kai.blin@gmail.com',
