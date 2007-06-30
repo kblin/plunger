@@ -8,3 +8,10 @@ specifying a custom --prefix, e.g.
 
 python setup.py install --prefix=$HOME
 
+You will want to make sure that $PYTHONPATH is set accordingly.
+For bash, add a line to ~/.bashrc like
+
+export PYTHONPATH=${PYTHONPATH}:${HOME}/lib/python<version>/site-packages/
+
+replacing <version> by the version number printed by python --version
+Don't forget reloading ~/.bashrc after you're done editing it.
