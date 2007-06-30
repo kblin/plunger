@@ -1,0 +1,9 @@
+#summary plunger project news.
+#labels Featured,Phase-Design
+
+*2007-06-30 Plunger moved to Google project hosting.*
+ * If you are reading this page, you already noticed.
+
+*2007-06-22 Plunger 0.1.0 has been released.*
+ * See the [ReleaseNotes release notes]. 
+ * Get it from [http://code.google.com/p/plunger/downloads/list the download section].
