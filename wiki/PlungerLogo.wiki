@@ -1,10 +1,11 @@
 #summary Getting a logo for plunger designed.
-#labels Phase-Design
+#labels Phase-Design,Deprecated
 
 = Introduction =
 
 While plunger is a text-only application for now, it would still be nice to have a logo for things like the [https://launchpad.net/plunger project's page on launchpad].
 
+This is implemented now.
 
 = Details =
 
@@ -18,7 +19,5 @@ While plunger is a text-only application for now, it would still be nice to have
 == Ideas ==
 
   * Take the !WorldForge globe and anvil, but replace the sword by a plunger.
-
-
 
 
